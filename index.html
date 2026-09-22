@@ -420,52 +420,83 @@
       <div class="card">
         <div class="card-h red">New session <small id="setup-date-lbl"></small></div>
         <div class="card-b">
-          <div class="grid g4">
-            <div><label class="f" for="s-type">Type</label>
-              <select id="s-type">
-                <option value="doubles" selected>Doubles</option>
-                <option value="singles">Singles</option>
-              </select></div>
-            <div><label class="f" for="s-date">Date</label><input type="date" id="s-date"></div>
-            <div><label class="f" for="s-courts">Courts</label>
-              <select id="s-courts"><option selected>1</option><option>2</option><option>3</option><option>4</option></select></div>
-            <div><label class="f" for="s-format">Format</label>
-              <select id="s-format">
-                <option value="americano" selected>Americano — variety</option>
-                <option value="mexicano">Mexicano — by standing</option>
-              </select></div>
-            <div id="mex-wrap" style="display:none"><label class="f" for="s-mexpair">Mexicano pairing</label>
-              <select id="s-mexpair">
-                <option value="balanced" selected>Balanced — 1st+4th v 2nd+3rd</option>
-                <option value="similar">Similar — 1st+2nd v 3rd+4th</option>
-              </select></div>
-            <div><label class="f" for="s-mode">Scoring</label>
-              <select id="s-mode">
-                <option value="fixedpts" selected>Points — fixed total</option>
-                <option value="racepts">Points — race to</option>
-                <option value="racegames">Games — race to</option>
-                <option value="fixedgames">Games — fixed number</option>
-              </select></div>
-            <div><label class="f" for="s-target"><span id="s-target-lbl">Total points</span></label>
-              <input type="number" id="s-target" min="1" max="99" value="21"></div>
-          </div>
-          <div style="margin-top:14px">
-            <label class="f">Who's here? <span id="att-count" style="color:var(--tang)"></span></label>
-            <div class="recall" id="att-recall"></div>
-            <div class="rsearch">
-              <input type="search" id="att-search" placeholder="Search players…" aria-label="Search players">
-              <button class="btn quiet" id="btn-att-clear">Clear all</button>
+          <div class="n" id="setup-stepper" style="margin-bottom:14px;font-weight:600"></div>
+
+          <!-- STEP 1: type, date, courts, format, scoring -->
+          <div id="setup-step1">
+            <div class="grid g4">
+              <div><label class="f" for="s-type">Type</label>
+                <select id="s-type">
+                  <option value="doubles" selected>Doubles</option>
+                  <option value="singles">Singles</option>
+                </select></div>
+              <div><label class="f" for="s-date">Date</label><input type="date" id="s-date"></div>
+              <div><label class="f" for="s-courts">Courts</label>
+                <select id="s-courts"><option selected>1</option><option>2</option><option>3</option><option>4</option></select></div>
+              <div><label class="f" for="s-format">Format</label>
+                <select id="s-format">
+                  <option value="americano" selected>Americano — variety</option>
+                  <option value="mexicano">Mexicano — by standing</option>
+                </select></div>
+              <div id="mex-wrap" style="display:none"><label class="f" for="s-mexpair">Mexicano pairing</label>
+                <select id="s-mexpair">
+                  <option value="balanced" selected>Balanced — 1st+4th v 2nd+3rd</option>
+                  <option value="similar">Similar — 1st+2nd v 3rd+4th</option>
+                </select></div>
+              <div><label class="f" for="s-mode">Scoring</label>
+                <select id="s-mode">
+                  <option value="fixedpts" selected>Points — fixed total</option>
+                  <option value="racepts">Points — race to</option>
+                  <option value="racegames">Games — race to</option>
+                  <option value="fixedgames">Games — fixed number</option>
+                </select></div>
+              <div><label class="f" for="s-target"><span id="s-target-lbl">Total points</span></label>
+                <input type="number" id="s-target" min="1" max="99" value="21"></div>
             </div>
-            <div class="chips" id="att-chips"></div>
-            <div id="att-none" class="empty" style="display:none;padding:12px 0"></div>
+            <div class="row-btns">
+              <button class="btn" id="btn-step1-next">Next: players →</button>
+            </div>
           </div>
-          <label id="mixed-wrap" style="display:flex;align-items:center;gap:8px;margin-top:14px;font-size:13.5px;cursor:pointer">
-            <input type="checkbox" id="s-mixed" style="width:auto"> Prefer mixed pairs when the split allows
-          </label>
-          <div class="row-btns">
-            <button class="btn" id="btn-start">Start session</button>
-            <button class="btn quiet" id="btn-addall">Select everyone</button>
+
+          <!-- STEP 2: who's here, mixed / fixed-partner pairing (doubles only) -->
+          <div id="setup-step2" hidden>
+            <div>
+              <label class="f">Who's here? <span id="att-count" style="color:var(--tang)"></span></label>
+              <div class="recall" id="att-recall"></div>
+              <div class="rsearch">
+                <input type="search" id="att-search" placeholder="Search players…" aria-label="Search players">
+                <button class="btn quiet" id="btn-att-clear">Clear all</button>
+              </div>
+              <div class="chips" id="att-chips"></div>
+              <div id="att-none" class="empty" style="display:none;padding:12px 0"></div>
+            </div>
+            <label id="mixed-wrap" style="display:flex;align-items:center;gap:8px;margin-top:14px;font-size:13.5px;cursor:pointer">
+              <input type="checkbox" id="s-mixed" style="width:auto"> Prefer mixed pairs when the split allows
+            </label>
+            <label id="fixed-wrap" style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13.5px;cursor:pointer">
+              <input type="checkbox" id="s-fixed" style="width:auto"> Fixed partners — lock pairs for the whole session
+            </label>
+            <div id="pair-wrap" style="display:none;margin-top:14px">
+              <label class="f">Lock partners <span id="pair-count" style="color:var(--tang)"></span></label>
+              <div class="n" style="margin-bottom:6px">Tap a player, then tap who they're playing with all night. Partners never rotate apart — tap a paired chip to undo it. Anyone left unpaired gets randomly teamed up when you start (you'll get a warning first).</div>
+              <div class="chips" id="pair-chips"></div>
+            </div>
+            <div class="row-btns">
+              <button class="btn quiet" id="btn-step2-back">← Back</button>
+              <button class="btn" id="btn-step2-next">Next: confirm →</button>
+              <button class="btn quiet" id="btn-addall">Select everyone</button>
+            </div>
           </div>
+
+          <!-- STEP 3: confirm -->
+          <div id="setup-step3" hidden>
+            <div class="n" id="setup-summary" style="margin-bottom:14px"></div>
+            <div class="row-btns">
+              <button class="btn quiet" id="btn-step3-back">← Back</button>
+              <button class="btn" id="btn-start">Start session</button>
+            </div>
+          </div>
+
         </div>
         <div class="card-f" id="setup-hint"></div>
       </div>
@@ -786,6 +817,73 @@
   function bornAfter(item, epoch){ return (item.ct===undefined?epoch:item.ct) >= epoch; }
   function byId(id){ for(var i=0;i<S.players.length;i++) if(S.players[i].id===id) return S.players[i]; return null; }
   function nameOf(id){ var p=byId(id); return p?p.name:"?"; }
+  // Full session label: type + format, plus " · Fixed Partner" when partners
+  // were locked. x is either a live session or a recorded one — both carry
+  // .singles, .format and .fixedPartners.
+  function sessionLabel(x){
+    return (x&&x.singles?"Singles ":"Doubles ")+(x&&x.format==="mexicano"?"Mexicano":"Americano")+
+      ((x&&x.fixedPartners)?" · Fixed Partner":"");
+  }
+
+  /* ---- Fixed Partner display grouping ----
+     Ratings and monthly points still apply per player underneath (each person
+     has their own rating, and that's correct — they still need one). This is
+     purely about how a Fixed Partner session's results are SHOWN: since the
+     two teammates play every round together, they always finish a fixed
+     session with identical share/wins/diff, so any per-player table/podium
+     shows them as two adjacent, identical-looking rows. This groups them back
+     into the one team result that they actually are. Never applies to singles
+     — the toggle that produces .fixedPartners is hidden there.
+     Team membership isn't stored as its own field on the record — it's
+     derived from the rounds themselves (every court's a/b IS a fixed team,
+     unchanged all night), so this also works for older recorded sessions. */
+  function teamsOfRecord(rec){
+    if(!rec || !rec.fixedPartners) return null;
+    var seen={}, teams=[];
+    (rec.rounds||[]).forEach(function(rd){
+      (rd.courts||[]).forEach(function(c){
+        [c.a,c.b].forEach(function(team){
+          if(!team || team.length!==2) return;
+          var k=team.slice().sort().join("+");
+          if(!seen[k]){ seen[k]=1; teams.push(team.slice()); }
+        });
+      });
+    });
+    return teams;
+  }
+  // Collapses a per-player standings table into one row per team when the
+  // record is Fixed Partner; passes any other record through unchanged.
+  function displayStandings(rec, table){
+    var teams=teamsOfRecord(rec);
+    if(!teams) return (table||[]).map(function(r){
+      return {name:r.name, ids:[r.id], row:r, share:r.share, wins:r.wins, diff:r.diff, pts:r.pts,
+        against:r.against, played:r.played, raw:r.raw, monthPts:r.monthPts,
+        ratings:[{name:r.name, after:r.after, rdAfter:r.rdAfter, delta:r.delta}]};
+    });
+    var byId2={}; (table||[]).forEach(function(r){ byId2[r.id]=r; });
+    var used={}, out=[];
+    teams.forEach(function(team){
+      var rows=team.map(function(id){ return byId2[id]; }).filter(Boolean);
+      if(!rows.length) return;
+      rows.forEach(function(r){ used[r.id]=1; });
+      var base=rows[0];
+      out.push({
+        name: rows.map(function(r){ return r.name; }).join(" & "),
+        ids: team.slice(), row: base,
+        share:base.share, wins:base.wins, diff:base.diff, pts:base.pts,
+        against:base.against, played:base.played, raw:base.raw,
+        monthPts: base.monthPts,
+        ratings: rows.map(function(r){ return {name:r.name, after:r.after, rdAfter:r.rdAfter, delta:r.delta}; })
+      });
+    });
+    (table||[]).forEach(function(r){
+      if(!used[r.id]) out.push({name:r.name, ids:[r.id], row:r, share:r.share, wins:r.wins, diff:r.diff,
+        pts:r.pts, against:r.against, played:r.played, raw:r.raw, monthPts:r.monthPts,
+        ratings:[{name:r.name, after:r.after, rdAfter:r.rdAfter, delta:r.delta}]});
+    });
+    out.sort(function(a,b){ return (b.share-a.share)||(b.wins-a.wins)||(b.diff-a.diff); });
+    return out;
+  }
   function monthKey(d){ return (d||new Date().toISOString().slice(0,10)).slice(0,7); }
   function monthName(k){
     var m=["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -1039,6 +1137,7 @@
   }
 
   function makeRound(live){
+    if(live.fixedPartners) return makeFixedRound(live);
     var playing=pickPlaying(live);
     var teamSize=live.teamSize||2;
     if(playing.length<2*teamSize) return null;
@@ -1055,6 +1154,103 @@
     }
     var out=live.out||[];
     var sitting=live.attendees.filter(function(id){ return playing.indexOf(id)<0 && out.indexOf(id)<0; });
+    return {courts:courts,sitting:sitting};
+  }
+
+  /* ---- Fixed Partner: only ever used for doubles (teamSize 2) — the setup
+     UI hides the toggle entirely for singles. Teams are locked for the whole
+     session at setup; only which TEAM plays which TEAM rotates round to
+     round. Opponent scheduling follows whichever format was picked: fewest-
+     repeat-opponent under Americano, rank-seeded under Mexicano — mirroring
+     pickPlaying/pairAmericano/pairMexicano one level up. ---- */
+  function teamKey(team){ return team.slice().sort().join("+"); }
+  function teamOf(live,id){
+    var t=(live.teams||[]).filter(function(tm){ return tm.indexOf(id)>=0; })[0];
+    return t||null;
+  }
+  function playedTeamCount(live){
+    var n={};
+    (live.teams||[]).forEach(function(t){ n[teamKey(t)]=0; });
+    live.rounds.forEach(function(rd){
+      rd.courts.forEach(function(c){
+        var ka=teamKey(c.a), kb=teamKey(c.b);
+        if(n[ka]!==undefined) n[ka]++;
+        if(n[kb]!==undefined) n[kb]++;
+      });
+    });
+    return n;
+  }
+  function pickPlayingTeams(live){
+    var out=live.out||[];
+    var teams=(live.teams||[]).filter(function(t){ return out.indexOf(t[0])<0 && out.indexOf(t[1])<0; });
+    var cap=live.courts*2, n=teams.length;
+    var slots = n>=cap ? cap : Math.floor(n/2)*2;
+    var played=playedTeamCount(live);
+    teams.sort(function(x,y){
+      var kx=teamKey(x), ky=teamKey(y);
+      var sx=live.rounds.length-played[kx], sy=live.rounds.length-played[ky];
+      if(sy!==sx) return sy-sx;          // sat out most -> plays
+      if(played[kx]!==played[ky]) return played[kx]-played[ky];
+      return Math.random()-0.5;
+    });
+    return teams.slice(0,slots);
+  }
+  function oppKey(x,y){ return [teamKey(x),teamKey(y)].sort().join("|"); }
+  function oppCount(live,x,y){ return (live.oppHist&&live.oppHist[oppKey(x,y)])||0; }
+  function noteOpponents(live,matchups){
+    live.oppHist=live.oppHist||{};
+    matchups.forEach(function(m){
+      var k=oppKey(m[0],m[1]);
+      live.oppHist[k]=(live.oppHist[k]||0)+1;
+    });
+  }
+  // Americano-style: fewest-repeat-opponent greedy matching. Used when the
+  // session's format is Americano, or on round 1 of any fixed-partner
+  // session (no session data yet to rank teams by).
+  function pairFixedOpponents(live,playingTeams){
+    var pool=playingTeams.slice(), matchups=[];
+    while(pool.length>1){
+      var best=null,bs=null;
+      for(var i=0;i<pool.length;i++) for(var j=i+1;j<pool.length;j++){
+        var x=pool[i],y=pool[j];
+        var s=oppCount(live,x,y)*10+Math.random()*0.5;
+        if(bs===null||s<bs){bs=s;best=[x,y];}
+      }
+      pool.splice(pool.indexOf(best[0]),1);
+      pool.splice(pool.indexOf(best[1]),1);
+      matchups.push(best);
+    }
+    return matchups;
+  }
+  // Mexicano-style: rank locked teams by how the session's gone so far (both
+  // partners always carry identical stats, so either one's numbers rank the
+  // team) and match adjacent ranks — the team-level analog of pairMexicano's
+  // seeding, minus the partner-pairing step since partners are fixed.
+  function pairFixedMexicanoOpponents(live,playingTeams){
+    var t=sessionTotals(live);
+    var ranked=playingTeams.slice().sort(function(x,y){
+      var rx=t[x[0]], ry=t[y[0]];
+      if(ry.share!==rx.share) return ry.share-rx.share;
+      if(ry.diff!==rx.diff) return ry.diff-rx.diff;
+      var ex=(byId(x[0]).elo+byId(x[1]).elo)/2, ey=(byId(y[0]).elo+byId(y[1]).elo)/2;
+      return ey-ex;
+    });
+    var matchups=[];
+    for(var i=0;i+1<ranked.length;i+=2) matchups.push([ranked[i],ranked[i+1]]);
+    return matchups;
+  }
+  function makeFixedRound(live){
+    var playingTeams=pickPlayingTeams(live);
+    if(playingTeams.length<2) return null;
+    var first=live.rounds.length===0;
+    var matchups=(live.format==="mexicano" && !first)
+      ? pairFixedMexicanoOpponents(live,playingTeams)
+      : pairFixedOpponents(live,playingTeams);
+    noteOpponents(live,matchups);
+    var courts=matchups.map(function(m){ return {a:m[0],b:m[1],sa:null,sb:null}; });
+    var playingIds=[].concat.apply([],playingTeams);
+    var out=live.out||[];
+    var sitting=live.attendees.filter(function(id){ return playingIds.indexOf(id)<0 && out.indexOf(id)<0; });
     return {courts:courts,sitting:sitting};
   }
 
@@ -1283,25 +1479,46 @@
     el("live").hidden=!live;
     if(!live){ renderSetup(); return; }
 
-    el("live-title").textContent=(live.singles?"Singles ":"Doubles ")+(live.format==="mexicano"
-      ? "Mexicano ("+((live.mexPair||"balanced")==="similar"?"similar":"balanced")+")"
-      : "Americano")+" · "+live.date;
+    el("live-title").textContent=(live.format==="mexicano"
+      ? (live.singles?"Singles ":"Doubles ")+"Mexicano ("+((live.mexPair||"balanced")==="similar"?"similar":"balanced")+")"+(live.fixedPartners?" · Fixed Partner":"")
+      : sessionLabel(live))+" · "+live.date;
     var outN=(live.out||[]).length;
     el("live-sub").textContent=live.courts+" courts · "+modeOf(live).blurb(live.target)+" · "+
       (live.attendees.length-outN)+" playing"+(outN?" · "+outN+" sat out":"");
     if(el("lv-date").value!==live.date) el("lv-date").value=live.date;
-    renderWalkIn(live);
+    var findBox=el("lv-find");
+    if(live.fixedPartners){
+      el("lv-hits").innerHTML='<span class="n">Walk-ins aren\'t supported yet for fixed-partner sessions — add everyone before starting.</span>';
+      if(findBox){ findBox.value=""; findBox.disabled=true; findBox.placeholder="Not available for Fixed Partner sessions"; }
+    } else {
+      if(findBox){ findBox.disabled=false; findBox.placeholder="Type a name — on the roster or brand new"; }
+      renderWalkIn(live);
+    }
     el("lv-chips").innerHTML=live.attendees.map(function(id){
       var p=byId(id); if(!p) return "";
       var out=(live.out||[]).indexOf(id)>=0;
+      var partnerNote="";
+      if(live.fixedPartners){
+        var t=teamOf(live,id);
+        if(t){ var other=byId(t[0]===id?t[1]:t[0]); if(other) partnerNote=' <small>+ '+esc(other.name)+'</small>'; }
+      }
       return '<button class="chip" data-sit="'+id+'" aria-pressed="'+(out?"false":"true")+'">'+
-        esc(p.name)+(out?" · out":"")+'</button>';
+        esc(p.name)+partnerNote+(out?" · out":"")+'</button>';
     }).join("");
     el("lv-chips").querySelectorAll("[data-sit]").forEach(function(b){
       b.addEventListener("click",function(){
         live.out=live.out||[];
-        var i=live.out.indexOf(b.dataset.sit);
-        if(i>=0) live.out.splice(i,1); else live.out.push(b.dataset.sit);
+        var id=b.dataset.sit, ids=[id];
+        if(live.fixedPartners){
+          var t=teamOf(live,id);
+          if(t) ids=t.slice();
+        }
+        var anyOut=ids.some(function(x){ return live.out.indexOf(x)>=0; });
+        ids.forEach(function(x){
+          var i=live.out.indexOf(x);
+          if(anyOut){ if(i>=0) live.out.splice(i,1); }
+          else if(i<0) live.out.push(x);
+        });
         save(); renderSession();
       });
     });
@@ -1473,6 +1690,7 @@
           S.setupSel=S.setupSel||{};
           S.setupSel[c.dataset.p]=!S.setupSel[c.dataset.p];
           c.setAttribute("aria-pressed",S.setupSel[c.dataset.p]?"true":"false");
+          renderPairSetup();
           updateSetupHint();
         });
       });
@@ -1481,7 +1699,112 @@
     }
     if(!el("s-date").value) el("s-date").value=new Date().toISOString().slice(0,10);
     renderRecall();
+    renderPairSetup();
     updateSetupHint();
+    if(S.setupStep===undefined) S.setupStep=1;
+    setStep(S.setupStep);
+  }
+  /* ---- 3-step wizard: 1 setup, 2 players/pairing, 3 confirm ---- */
+  function setStep(n){
+    S.setupStep=n;
+    [1,2,3].forEach(function(i){ var e=el("setup-step"+i); if(e) e.hidden=(i!==n); });
+    var hint=el("setup-hint"); if(hint) hint.style.display = n===2 ? "" : "none";
+    if(n===3) renderStep3Summary();
+    renderStepper();
+  }
+  function renderStepper(){
+    var host=el("setup-stepper"); if(!host) return;
+    var n=S.setupStep||1;
+    var labels=["1 · Setup","2 · Players","3 · Confirm"];
+    host.innerHTML=labels.map(function(l,i){
+      return '<span style="'+(i+1===n?'color:var(--tang)':'opacity:.45')+'">'+l+'</span>';
+    }).join(' &nbsp;→&nbsp; ');
+  }
+  function renderStep3Summary(){
+    var host=el("setup-summary"); if(!host) return;
+    var n=selectedIds().length, courts=parseInt(el("s-courts").value,10);
+    var singles=el("s-type").value==="singles";
+    var fmt=el("s-format").value, fixedOn=!singles && el("s-fixed").checked;
+    var M=MODES[el("s-mode").value]||MODES.fixedpts, tv=parseInt(el("s-target").value,10)||0;
+    var pm=pairedMap(), paired=Object.keys(pm).length, unpaired=n-paired;
+    var bits=[esc(el("s-date").value), courts+" court"+(courts===1?"":"s"),
+      sessionLabel({singles:singles,format:fmt,fixedPartners:fixedOn}), M.blurb(tv), n+" player"+(n===1?"":"s")];
+    if(fixedOn){
+      bits.push((paired/2)+" pair"+(paired/2===1?"":"s")+" locked"+
+        (unpaired>0? " — "+unpaired+" will be randomly paired at start" : ""));
+    }
+    host.textContent=bits.join(" · ");
+  }
+  /* Randomly teams up whatever's left unpaired. Odd one out (if any) is
+     excluded from this session rather than force-paired or left teamless —
+     a fixed-partner court can't seat a person with no team. Returns
+     {pairs:[[a,b],...], leftover:id|null}. Soft-prefers opposite-gender
+     pairs when mixedPref is set, same spirit as pairAmericano's nudge. */
+  function autoPairRemaining(ids, mixedPref){
+    var pool=ids.slice();
+    for(var i=pool.length-1;i>0;i--){
+      var j=Math.floor(Math.random()*(i+1)), t=pool[i]; pool[i]=pool[j]; pool[j]=t;
+    }
+    var leftover=null;
+    if(pool.length%2===1) leftover=pool.pop();
+    if(mixedPref){
+      for(var k=0;k+1<pool.length;k+=2){
+        if(byId(pool[k]).gender===byId(pool[k+1]).gender){
+          for(var m=k+2;m<pool.length;m++){
+            if(byId(pool[m]).gender!==byId(pool[k]).gender){
+              var tmp=pool[k+1]; pool[k+1]=pool[m]; pool[m]=tmp; break;
+            }
+          }
+        }
+      }
+    }
+    var pairs=[];
+    for(var n=0;n+1<pool.length;n+=2) pairs.push([pool[n],pool[n+1]]);
+    return {pairs:pairs, leftover:leftover};
+  }
+  function pairedMap(){
+    var m={};
+    (S.setupPairs||[]).forEach(function(pr){ m[pr[0]]=pr[1]; m[pr[1]]=pr[0]; });
+    return m;
+  }
+  function renderPairSetup(){
+    var wrap=el("pair-wrap"); if(!wrap) return;
+    var singles=el("s-type").value==="singles";
+    var isFixed = !singles && el("s-fixed").checked;
+    wrap.style.display = isFixed ? "" : "none";
+    if(!isFixed) return;
+    var ids=selectedIds();
+    // drop any pair that references someone no longer selected
+    S.setupPairs=(S.setupPairs||[]).filter(function(pr){ return ids.indexOf(pr[0])>=0 && ids.indexOf(pr[1])>=0; });
+    if(S.setupPending && ids.indexOf(S.setupPending)<0) S.setupPending=null;
+    var pm=pairedMap();
+    var sorted=ids.slice().sort(function(a,b){ return byId(a).name.localeCompare(byId(b).name); });
+    el("pair-chips").innerHTML=sorted.map(function(id){
+      var p=byId(id), partner=pm[id], pending=S.setupPending===id;
+      var label=esc(p.name)+(partner?' <small>+ '+esc(byId(partner).name)+'</small>':'');
+      return '<button class="chip'+(pending?' new':'')+'" data-pair="'+id+'" aria-pressed="'+(partner?"true":"false")+'">'+label+'</button>';
+    }).join("");
+    var paired=Object.keys(pm).length;
+    el("pair-count").textContent="· "+(paired/2)+" pair"+(paired/2===1?"":"s")+
+      (ids.length-paired? ", "+(ids.length-paired)+" unpaired" : "");
+    el("pair-chips").querySelectorAll("[data-pair]").forEach(function(b){
+      b.addEventListener("click",function(){
+        var id=b.dataset.pair, pm2=pairedMap();
+        if(pm2[id]){
+          S.setupPairs=(S.setupPairs||[]).filter(function(pr){ return pr.indexOf(id)<0; });
+          S.setupPending=null;
+        } else if(S.setupPending===id){
+          S.setupPending=null;
+        } else if(S.setupPending){
+          S.setupPairs=S.setupPairs||[];
+          S.setupPairs.push([S.setupPending,id]);
+          S.setupPending=null;
+        } else {
+          S.setupPending=id;
+        }
+        renderPairSetup(); updateSetupHint();
+      });
+    });
   }
   var DAYS=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
   function weekdayOf(iso){
@@ -1529,7 +1852,9 @@
   function updateSetupHint(){
     var n=selectedIds().length, courts=parseInt(el("s-courts").value,10);
     el("att-count").textContent=n?("· "+n+" selected"):"";
-    var per=el("s-type").value==="singles"?2:4;
+    var singles=el("s-type").value==="singles";
+    var per=singles?2:4;
+    var isFixed=!singles && el("s-fixed").checked;
     var cap=courts*per;
     var msg;
     if(n<per) msg="Select at least "+per+" players.";
@@ -1538,8 +1863,19 @@
     else msg=(n-cap)+" players sit out each round, rotated so nobody sits twice before everyone has sat once.";
     var M=MODES[el("s-mode").value]||MODES.fixedpts;
     var tv=parseInt(el("s-target").value,10)||0;
+    var ok=n>=per;
+    if(isFixed && n>=per){
+      var pm=pairedMap(), paired=Object.keys(pm).length, unpaired=n-paired;
+      if(unpaired>0){
+        msg=(paired/2)+" fixed pair"+(paired/2===1?"":"s")+" formed — "+unpaired+" player"+(unpaired===1?"":"s")+
+          " unpaired, will be randomly paired when you start.";
+      } else {
+        msg=(paired/2)+" fixed pair"+(paired/2===1?"":"s")+
+          (paired>cap? " — "+((paired-cap)/2)+" pair(s) sit out each round" : " — everyone's pair plays every round");
+      }
+    }
     el("setup-hint").textContent=msg+"  ·  "+M.blurb(tv);
-    el("btn-start").disabled=n<per;
+    if(el("btn-step2-next")) el("btn-step2-next").disabled=!ok;
   }
 
   /* --- month --- */
@@ -1736,10 +2072,11 @@
     if(!h.length){ el("se-list").innerHTML='<div class="empty">No sessions recorded yet.</div>'; el("se-detail").innerHTML=""; return; }
     el("se-list").innerHTML=h.map(function(x){
       var M=MODES[x.mode]||MODES.fixedpts;
-      var pod=(x.table||[]).slice(0,3).map(function(r,i){ return (i+1)+". "+esc(r.name); }).join("  ");
+      var pod=displayStandings(x, x.table).slice(0,3)
+        .map(function(r,i){ return (i+1)+". "+esc(r.name); }).join("  ");
       return '<div class="selog" data-s="'+x.id+'" aria-expanded="'+(S.seOpen===x.id?"true":"false")+'">'+
         '<span class="dt">'+esc(x.date)+'</span>'+
-        '<span class="meta">'+(x.singles?"Singles ":"Doubles ")+(x.format==="mexicano"?"Mexicano":"Americano")+' · '+M.blurb(x.target)+
+        '<span class="meta">'+sessionLabel(x)+' · '+M.blurb(x.target)+
           ' · '+x.players+' players · '+(x.rounds_n||(x.rounds&&x.rounds.length)||0)+' rounds</span>'+
         '<span class="pod"><b>'+pod+'</b></span></div>';
     }).join("");
@@ -1761,14 +2098,25 @@
     var std='<div class="card"><div class="card-h">'+esc(x.date)+' · final standing</div>'+
       '<table><thead><tr><th></th><th>Player</th><th>Played</th><th>Won</th>'+
       '<th>'+(G?"GF":"PF")+'</th><th>'+(G?"GA":"PA")+'</th><th>Share</th><th>Month pts</th><th>Rating</th><th>±</th><th>Δ</th></tr></thead><tbody>'+
-      (x.table||[]).map(function(r,i){
+      displayStandings(x, x.table).map(function(r,i){
         var cls=i===0?"p1":(i<3?"p2":"");
+        // A Fixed Partner row is one team, but rating is still genuinely
+        // per-player — show both, stacked, rather than merging two different
+        // numbers into one.
+        var multi=r.ratings.length>1;
+        var ratingCell=r.ratings.map(function(rt){
+          return multi ? esc(rt.name)+': '+Math.round(rt.after) : Math.round(rt.after);
+        }).join("<br>");
+        var rdCell=r.ratings.map(function(rt){
+          return rt.rdAfter!==undefined?"±"+Math.round(rt.rdAfter):"–";
+        }).join("<br>");
+        var deltaCell=r.ratings.map(function(rt){
+          return '<span class="'+(rt.delta>0?"up":(rt.delta<0?"dn":""))+'">'+fmtSigned(rt.delta)+'</span>';
+        }).join("<br>");
         return '<tr class="'+cls+'"><td>'+(i+1)+'</td><td>'+esc(r.name)+'</td>'+
           '<td>'+r.played+'</td><td>'+r.wins+'</td><td>'+r.pts+'</td><td>'+r.against+'</td>'+
           '<td>'+Math.round((r.raw!==undefined?r.raw:r.share)*100)+'%</td><td>'+r.monthPts+'</td>'+
-          '<td>'+Math.round(r.after)+'</td>'+
-          '<td>'+(r.rdAfter!==undefined?"±"+Math.round(r.rdAfter):"–")+'</td>'+
-          '<td class="'+(r.delta>0?"up":(r.delta<0?"dn":""))+'">'+fmtSigned(r.delta)+'</td></tr>';
+          '<td>'+ratingCell+'</td><td>'+rdCell+'</td><td>'+deltaCell+'</td></tr>';
       }).join("")+'</tbody></table></div>';
 
     var formula='<div class="formula">'+
@@ -1941,32 +2289,62 @@
     }
     updateSetupHint();
   }
+  function refreshMexWrap(){
+    var singles=el("s-type").value==="singles";
+    el("mex-wrap").style.display = (el("s-format").value==="mexicano" && !(!singles && el("s-fixed").checked)) ? "" : "none";
+  }
   el("s-format").addEventListener("change",function(){
-    el("mex-wrap").style.display = el("s-format").value==="mexicano" ? "" : "none";
+    refreshMexWrap();
+    renderPairSetup();
+    updateSetupHint();
   });
   function applyTeamType(){
     var singles=el("s-type").value==="singles";
     el("mixed-wrap").style.display = singles ? "none" : "flex";
+    el("fixed-wrap").style.display = singles ? "none" : "flex";
+    if(singles && el("s-fixed").checked){
+      el("s-fixed").checked=false;
+      S.setupPairs=[]; S.setupPending=null;
+    }
     var opts=el("s-mexpair").options;
     opts[0].textContent = singles ? "Balanced — top v bottom" : "Balanced — 1st+4th v 2nd+3rd";
     opts[1].textContent = singles ? "Similar — closest ranks" : "Similar — 1st+2nd v 3rd+4th";
+    refreshMexWrap();
+    renderPairSetup();
     updateSetupHint();
   }
   el("s-type").addEventListener("change",applyTeamType);
+  el("s-fixed").addEventListener("change",function(){
+    refreshMexWrap();
+    renderPairSetup();
+    updateSetupHint();
+  });
   el("s-mode").addEventListener("change",function(){ el("s-target").dataset.touched=""; modeDefaults(); });
   el("s-target").addEventListener("input",function(){ el("s-target").dataset.touched="1"; updateSetupHint(); });
   el("s-courts").addEventListener("change",updateSetupHint);
   el("s-date").addEventListener("change",function(){ renderRecall(); });
 
-  el("btn-start").addEventListener("click",function(){
-    var ids=selectedIds();
+  /* ---- wizard navigation ---- */
+  el("btn-step1-next").addEventListener("click",function(){ setStep(2); });
+  el("btn-step2-back").addEventListener("click",function(){ setStep(1); });
+  el("btn-step2-next").addEventListener("click",function(){
     var singles=el("s-type").value==="singles";
-    var per=singles?2:4;
-    if(ids.length<per) return;
+    if(selectedIds().length<(singles?2:4)) return;
+    setStep(3);
+  });
+  el("btn-step3-back").addEventListener("click",function(){ setStep(2); });
+
+  // Actually creates S.live and starts round 1. finalPairs is the fixed-
+  // partner team list to use (already resolved — manual pairs plus any
+  // auto-paired leftovers), or null when fixed partners isn't on.
+  function reallyStart(ids,finalPairs){
+    var singles=el("s-type").value==="singles";
+    var fixedOn=!singles && el("s-fixed").checked;
     S.live={
       date:el("s-date").value||new Date().toISOString().slice(0,10),
       courts:parseInt(el("s-courts").value,10),
       format:el("s-format").value,
+      fixedPartners:fixedOn,
       target:Math.max(1,parseInt(el("s-target").value,10)||1),
       mode:el("s-mode").value,
       mexPair:el("s-mexpair").value,
@@ -1974,9 +2352,47 @@
       singles:singles, teamSize: singles?1:2,
       attendees:ids, out:[], rounds:[], partnerHist:{}
     };
+    if(fixedOn){
+      S.live.teams=(finalPairs||[]).map(function(pr){ return pr.slice(); });
+      S.live.oppHist={};
+      // anyone dropped for lacking a partner never joined this session
+      var teamed={}; S.live.teams.forEach(function(t){ teamed[t[0]]=1; teamed[t[1]]=1; });
+      S.live.attendees=S.live.attendees.filter(function(id){ return teamed[id]; });
+    }
     var r=makeRound(S.live);
     if(r) S.live.rounds.push(r);
+    S.setupPairs=[]; S.setupPending=null;
     save(); render();
+  }
+
+  el("btn-start").addEventListener("click",function(){
+    var ids=selectedIds();
+    var singles=el("s-type").value==="singles";
+    var per=singles?2:4;
+    if(ids.length<per) return;
+    var fixedOn=!singles && el("s-fixed").checked;
+    if(fixedOn){
+      var pm=pairedMap();
+      var unpaired=ids.filter(function(id){ return !pm[id]; });
+      if(unpaired.length){
+        var auto=autoPairRemaining(unpaired, el("s-mixed").checked);
+        var preview=auto.pairs.map(function(pr){ return nameOf(pr[0])+" & "+nameOf(pr[1]); }).join(", ")||"none";
+        var dropNote=auto.leftover?(" "+nameOf(auto.leftover)+" is the odd one out and will sit this session out."):"";
+        confirmBox(
+          "Randomly pair "+unpaired.length+" player"+(unpaired.length===1?"":"s")+"?",
+          "Not manually paired: "+preview+"."+dropNote+" They'll be randomly teamed up so the session can start.",
+          "Pair & start",
+          function(){
+            var finalPairs=(S.setupPairs||[]).concat(auto.pairs);
+            reallyStart(ids,finalPairs);
+          }
+        );
+        return;
+      }
+      reallyStart(ids,(S.setupPairs||[]).slice());
+      return;
+    }
+    reallyStart(ids,null);
   });
 
   el("lv-date").addEventListener("change",function(){
@@ -2131,10 +2547,10 @@
         return;
       }
       var M=MODES[x.mode]||MODES.fixedpts;
-      var t=x.table;
+      var t=displayStandings(x, x.table);
       var tail = fmt==="screen" ? 7 : (fmt==="print" ? 14 : 8);
       var rest=t.slice(3,tail);
-      host.innerHTML=shareHead("Session result", (x.singles?"Singles ":"Doubles ")+(x.format==="mexicano"?"Mexicano night":"Americano night"),
+      host.innerHTML=shareHead("Session result", sessionLabel(x)+" night",
           prettyDate(x.date)+" · "+x.players+" players · "+M.blurb(x.target))+
         '<div class="sc-body">'+
           podiumBlock(t.slice(0,3),
@@ -2359,7 +2775,7 @@
 
   el("btn-abandon").addEventListener("click",function(){
     confirmBox("Abandon session?","Nothing from tonight will be recorded — no ratings, no monthly points.","Abandon",function(){
-      S.live=null; save(); render();
+      S.live=null; S.setupStep=1; save(); render();
     });
   });
 
@@ -2399,6 +2815,7 @@
       id: live.recId || uid(),
       date: live.date, format: live.format, mode: live.mode||"fixedpts",
       mexPair: live.mexPair||"balanced", singles: !!live.singles,
+      fixedPartners: !!live.fixedPartners,
       target: live.target, courts: live.courts,
       attendees: live.attendees.slice(),
       rounds: live.rounds.map(function(rd){
@@ -2530,6 +2947,7 @@
     S.history.push(rec);
     recomputeAll();
     S.live=null;
+    S.setupStep=1;
     S.monthView=monthKey(rec.date);
     S.t=Date.now();
     save();
@@ -3206,7 +3624,6 @@
   if(boot&&boot.auto) setTimeout(function(){ doSync(true); },300);
   else if(boot) flag(true,"Sync ready — tap Sync now");
   modeDefaults();
-  el("mex-wrap").style.display = el("s-format").value==="mexicano" ? "" : "none";
   applyTeamType();
   applyHostMode();
   setView(isHost() ? (S.live?"session":(activePlayers().length?"session":"players")) : "month");
@@ -3215,7 +3632,8 @@
   window.__league={get S(){return S}, set S(v){S=v}, glicko:glicko, matchDetail:matchDetail, makeRound:makeRound,
                    mergeStores:mergeStores, adoptStore:adoptStore, recomputeAll:recomputeAll,
                    sessionTotals:sessionTotals, render:render, setView:setView, byId:byId,
-                   kioskStep:kioskStep, kioskSlides:kioskSlides, paintCard:paintCard};
+                   kioskStep:kioskStep, kioskSlides:kioskSlides, paintCard:paintCard,
+                   displayStandings:displayStandings, teamsOfRecord:teamsOfRecord};
 })();
 </script>
 </body>
