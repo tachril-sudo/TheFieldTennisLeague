@@ -10,16 +10,29 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
+    /* The tennis build is authored dark, so it pins the scheme the same way the
+       padel build pins light: declaring it stops viewers in the opposite mode
+       from "auto-darkening"/"auto-lightening" the page with heuristics that
+       don't understand this CSS (which is what once made roster names render
+       invisible). Every surface colour below is a dark value on purpose. */
+    color-scheme: only dark;
     --tang:#4C8DFF; --federal:#000749; --azure:#78D4FB; --pink:#FF00C1; --green:#4CAF7D;
     --columbia:#16233F; --mint:#5CBC90;
     --red:var(--tang); --red-deep:#6FA3FF; --red-ink:#000749;
     --paper:#0B1220; --card:#131B30; --ink:#E8ECF7;
     --tint:var(--columbia); --tint-2:#16241F;
-    --stone:#7E90B8; --stone-2:#A9B8D6;
-    --rule:#243252; --gold:#C99A2E; --bar:#060B1E;
+    --stone:#8FA2C6; --stone-2:#AFBDD9;
+    --rule:#243252; --gold:#C99A2E;
+    /* --ink doubles as the card-header bar in the light build; dark needs them
+       to be different colours, so the bar gets its own token. */
+    --bar:#060B1E;
+    /* --tang is tuned to read as text/borders on the dark page; white text on
+       it as a fill only reaches 3.2:1, so filled controls use a deeper blue
+       that carries white at 5.25:1. */
+    --accent-fill:#2466DB;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html{-webkit-text-size-adjust:100%;color-scheme:dark}
+  html{-webkit-text-size-adjust:100%}
   body{
     background:
       repeating-linear-gradient(0deg,rgba(76,141,255,.06) 0 1px,transparent 1px 22px),
@@ -61,7 +74,7 @@
     font-family:"Inter Tight",sans-serif;font-weight:700;font-size:15px;letter-spacing:.03em;text-transform:uppercase;
     display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;
   }
-  .card-h.red{background:var(--tang)}
+  .card-h.red{background:var(--accent-fill)}
   .card-h small{font-family:"Inter Tight",sans-serif;font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.8}
   .card-b{padding:14px}
   .card-f{padding:9px 14px;background:#0F1830;border-top:1px solid var(--rule);font-size:12px;color:var(--stone-2)}
@@ -70,7 +83,7 @@
   label.f{display:block;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--stone-2);margin-bottom:4px;font-weight:600}
   input[type=text],input[type=date],input[type=number],input[type=search],select{
     font:inherit;font-size:16px;padding:11px 12px;border:1px solid var(--rule);
-    background:var(--card);color:var(--ink);border-radius:2px;width:100%;color-scheme:dark;
+    background:var(--card);color:var(--ink);border-radius:2px;width:100%;
   }
   input:focus,select:focus{outline:2px solid var(--red);outline-offset:-1px}
   .grid{display:grid;gap:12px}
@@ -80,7 +93,7 @@
   @media (max-width:720px){ .g3,.g4{grid-template-columns:1fr 1fr} }
   button.btn{
     font:inherit;font-size:13.5px;font-weight:600;padding:9px 14px;border-radius:2px;cursor:pointer;
-    border:1px solid var(--red);background:var(--red);color:#fff;
+    border:1px solid var(--accent-fill);background:var(--accent-fill);color:#fff;
   }
   button.btn.ghost{background:var(--card);color:var(--red-deep)}
   button.btn.quiet{background:var(--card);color:var(--stone-2);border-color:var(--rule)}
@@ -169,12 +182,45 @@
   .recall button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
   .chips{display:flex;flex-wrap:wrap;gap:7px}
   .chip{
-    font-size:13px;padding:7px 11px;border:1px solid var(--rule);background:var(--card);
+    font-size:13px;padding:7px 11px;border:1px solid var(--rule);background:var(--card);color:var(--ink);
     border-radius:20px;cursor:pointer;user-select:none;
   }
-  .chip[aria-pressed="true"]{background:var(--red);color:#fff;border-color:var(--red)}
+  .chip[aria-pressed="true"]{background:var(--accent-fill);color:#fff;border-color:var(--accent-fill)}
   .chip:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
   .chip.new{border-color:var(--green);color:var(--green);font-weight:600}
+  /* filter bars — segmented, thumb-sized, one row per question */
+  .pracbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    padding:11px 16px;background:#2E2008;border-bottom:2px solid #E8A33D}
+  .pracbar[hidden]{display:none}
+  .pracbar .pdot{width:10px;height:10px;border-radius:50%;background:#E8A33D;flex:none}
+  .pracbar .ptxt{font-size:13.5px;color:#F2C97E;flex:1;min-width:220px;line-height:1.45}
+  .pracbar button{font-size:13px;padding:7px 12px;border:1.5px solid #D9933A;background:#3A2A0C;
+    color:#F2C97E;border-radius:8px;cursor:pointer;font-weight:600;min-height:36px}
+  .fbar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:12px 14px;
+    border-bottom:1px solid var(--rule);background:#0F1830}
+  .fbar .seg{display:inline-flex;border:1.5px solid var(--rule);border-radius:10px;overflow:hidden}
+  .fbar .seg button{border:0;background:var(--card);padding:8px 13px;font-size:14px;cursor:pointer;
+    color:var(--stone-2);font-weight:600;min-height:38px}
+  .fbar .seg button+button{border-left:1.5px solid var(--rule)}
+  /* light build used --federal (near-black) for the selected segment; on a dark
+     page that reads as a hole, so the selected state takes the bright accent */
+  .fbar .seg button[aria-pressed="true"]{background:var(--accent-fill);color:#fff}
+  .fbar .tog{display:inline-flex;align-items:center;gap:7px;font-size:14px;color:var(--stone-2);
+    cursor:pointer;min-height:38px;user-select:none}
+  .fbar .tog input{width:18px;height:18px;margin:0}
+  .fbar .count{margin-left:auto;font-size:12.5px;color:var(--stone-2)}
+  /* on a phone the ratings table was squeezing names to three letters a line —
+     Matches and Peak are the least-read columns, so they go first */
+  @media (max-width:560px){
+    /* GF and GA go, not Win % — the ranking leads on that one */
+    #ss-table th:nth-child(6),#ss-table td:nth-child(6),
+    #ss-table th:nth-child(7),#ss-table td:nth-child(7){display:none}
+    #p-ratings table th:nth-child(4),#p-ratings table td:nth-child(4),
+    #p-ratings table th:nth-child(6),#p-ratings table td:nth-child(6){display:none}
+    #p-ratings table td:nth-child(2){min-width:118px}
+  }
+  .dvnote{font-size:13.5px;line-height:1.55;color:var(--stone-2);margin:4px 14px 10px;
+    padding:10px 12px;background:#0F1830;border-left:3px solid var(--tang);border-radius:4px}
 
   /* ---------- shareable / printable / display result card ----------
      One layout, three geometries. Every size is a multiple of --u so the same
@@ -393,12 +439,21 @@
     <p class="kicker">Ratings carry over forever. Monthly points reset on the 1st. Play three sessions in a month to be eligible for the podium.</p>
   </header>
 
+  <div class="pracbar" id="pracbar" hidden>
+    <span class="pdot"></span>
+    <span class="ptxt"><b>Practice mode</b> — a sandbox on this device. Nothing here reaches the league,
+      and the real standings are untouched.</span>
+    <button id="btn-prac-reset">Reset sandbox</button>
+    <button id="btn-prac-exit">Leave practice</button>
+  </div>
+
   <div class="savebar">
     <span class="dot" id="save-dot"></span>
     <span class="msg" id="save-msg">Loading…</span>
     <span class="sp"></span>
     <button id="btn-sync">Sync now</button>
     <button id="btn-host">Host sign in</button>
+    <button id="btn-practice" hidden>Practice session</button>
     <button id="btn-syncset">Sync setup</button>
     <button id="btn-export">Export backup</button>
     <button id="btn-import">Import</button>
@@ -422,7 +477,7 @@
         <div class="card-b">
           <div class="n" id="setup-stepper" style="margin-bottom:14px;font-weight:600"></div>
 
-          <!-- STEP 1: type, date, courts, format, scoring -->
+          <!-- STEP 1: date, courts, format, scoring -->
           <div id="setup-step1">
             <div class="grid g4">
               <div><label class="f" for="s-type">Type</label>
@@ -458,7 +513,7 @@
             </div>
           </div>
 
-          <!-- STEP 2: who's here, mixed / fixed-partner pairing (doubles only) -->
+          <!-- STEP 2: who's here, mixed / fixed-partner pairing -->
           <div id="setup-step2" hidden>
             <div>
               <label class="f">Who's here? <span id="att-count" style="color:var(--tang)"></span></label>
@@ -470,12 +525,14 @@
               <div class="chips" id="att-chips"></div>
               <div id="att-none" class="empty" style="display:none;padding:12px 0"></div>
             </div>
-            <label id="mixed-wrap" style="display:flex;align-items:center;gap:8px;margin-top:14px;font-size:13.5px;cursor:pointer">
-              <input type="checkbox" id="s-mixed" style="width:auto"> Prefer mixed pairs when the split allows
-            </label>
-            <label id="fixed-wrap" style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13.5px;cursor:pointer">
-              <input type="checkbox" id="s-fixed" style="width:auto"> Fixed partners — lock pairs for the whole session
-            </label>
+            <div id="doubles-opts">
+              <label style="display:flex;align-items:center;gap:8px;margin-top:14px;font-size:13.5px;cursor:pointer">
+                <input type="checkbox" id="s-mixed" style="width:auto"> Prefer mixed pairs when the split allows
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13.5px;cursor:pointer">
+                <input type="checkbox" id="s-fixed" style="width:auto"> Fixed partners — lock pairs for the whole session
+              </label>
+            </div>
             <div id="pair-wrap" style="display:none;margin-top:14px">
               <label class="f">Lock partners <span id="pair-count" style="color:var(--tang)"></span></label>
               <div class="n" style="margin-bottom:6px">Tap a player, then tap who they're playing with all night. Partners never rotate apart — tap a paired chip to undo it. Anyone left unpaired gets randomly teamed up when you start (you'll get a warning first).</div>
@@ -488,9 +545,15 @@
             </div>
           </div>
 
-          <!-- STEP 3: confirm -->
+          <!-- STEP 3: confirm + count-toward-league -->
           <div id="setup-step3" hidden>
             <div class="n" id="setup-summary" style="margin-bottom:14px"></div>
+            <label style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13.5px;cursor:pointer">
+              <input type="checkbox" id="s-rated" checked style="width:auto"> Count toward ratings &amp; the monthly league
+            </label>
+            <div class="n" id="rated-hint" style="margin-top:2px;display:none">
+              Scores are still recorded, but nobody's rating, division or monthly points move — a friendly/off-the-books session.
+            </div>
             <div class="row-btns">
               <button class="btn quiet" id="btn-step3-back">← Back</button>
               <button class="btn" id="btn-start">Start session</button>
@@ -528,14 +591,15 @@
       </div>
       <div class="card">
         <div class="card-h">Session standings <small id="ss-sub"></small></div>
-        <table><thead><tr>
+        <table id="ss-table"><thead><tr>
           <th></th><th>Player</th>
           <th title="Matches played this session">Played</th>
           <th title="Matches won">Won</th>
+          <th title="Matches won as a share of matches played — the first thing the ranking looks at">Win %</th>
           <th id="ss-for"  title="Scored for">GF</th>
           <th id="ss-agst" title="Conceded">GA</th>
           <th title="GF minus GA">Diff</th>
-          <th title="GF as a share of everything played">Share</th>
+          <th title="Total points divided by matches played — the first thing the ranking looks at">Per match</th>
         </tr></thead>
         <tbody id="ss-body"></tbody></table>
         <div class="card-f" id="ss-foot"></div>
@@ -556,6 +620,7 @@
           <button class="btn quiet" id="btn-share-month" style="padding:4px 10px;font-size:12.5px">Share card</button>
           <small id="mo-sub"></small>
         </span></div>
+      <div class="fbar" id="mo-filter"></div>
       <table><thead><tr><th></th><th>Player</th><th>Sess</th><th title="Best 3 session scores — this decides the month">Best 3</th><th title="Every session added up — the tiebreak">Total</th><th>Rating</th><th>Δ</th></tr></thead>
       <tbody id="mo-body"></tbody></table>
       <div class="card-f">10-8-6-5-4-3-2-1 per session by finishing position, 1 for everyone else. <b>Only your best 3 sessions count</b>; total is the tiebreak, so an extra session can still win it. Greyed rows have not reached 3 sessions.</div>
@@ -584,6 +649,7 @@
   <section class="panel" id="p-ratings" hidden>
     <div class="card">
       <div class="card-h red">Glicko-2 ratings <small id="rt-sub"></small></div>
+      <div class="fbar" id="rt-filter"></div>
       <table><thead><tr><th></th><th>Player</th><th>Division</th><th>Matches</th><th title="How sure the rating is — smaller is surer">±</th><th>Peak</th><th>Rating</th></tr></thead>
       <tbody id="rt-body"></tbody></table>
       <div class="card-f">Glicko-2. Each rating carries a <b>±</b> — how sure the system is. It starts wide, narrows as you play, and widens again if you stop coming, so a returning player moves quickly back to where they belong. <b>Settling</b> means the ± is still above 110. Divisions are 100 points apart and are <b>club-internal</b> — Div 2 here is not a national grade. One division up means winning roughly 64% of the time against the division below.</div>
@@ -701,6 +767,12 @@
   /* ========================================================================== */
 
   var KEY="modestalk-tennis-league-v1";
+  /* Practice mode: a sandbox for trying a session without signing in. It lives
+     in its own slot in this browser, makes no network calls at all, and can
+     never reach the league — so anyone can open the page and have a play. */
+  var PRACTICE_KEY="tf-tennis-practice-v1", PRACTICE_FLAG="tf-tennis-practice-on";
+  var practice=false;
+  function storeKey(){ return practice ? PRACTICE_KEY : KEY; }
   var START_ELO=1500;
   var SESSION_POINTS=[10,8,6,5,4,3,2,1];   // by finishing position, then 1
   var PRIOR_MATCHES=2;   // notional even matches every player is credited with, for ranking only
@@ -746,18 +818,19 @@
   function pad(n){return (n<10?"0":"")+n}
   function stamp(){var t=new Date();return pad(t.getHours())+":"+pad(t.getMinutes())+":"+pad(t.getSeconds())}
   function saveLocalOnly(){
-    try{ window.localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){}
+    try{ window.localStorage.setItem(storeKey(),JSON.stringify(S)); }catch(e){}
   }
   function save(){
     try{
-      window.localStorage.setItem(KEY,JSON.stringify(S));
-      flag(true,"Saved on this device · "+stamp());
+      window.localStorage.setItem(storeKey(),JSON.stringify(S));
+      flag(true, practice ? "Practice — saved on this device only · "+stamp()
+                          : "Saved on this device · "+stamp());
     }catch(e){ flag(false,"Not saved — storage blocked. Export a backup."); }
     scheduleSync();
   }
   function load(){
     try{
-      var raw=window.localStorage.getItem(KEY);
+      var raw=window.localStorage.getItem(storeKey());
       if(!raw){ flag(true,"New league — everything saves automatically"); return; }
       var o=JSON.parse(raw);
       if(o&&o.v===1){ S=o; if(!S.history) S.history=[]; flag(true,"Loaded from this device"); }
@@ -816,13 +889,21 @@
   }
   function bornAfter(item, epoch){ return (item.ct===undefined?epoch:item.ct) >= epoch; }
   function byId(id){ for(var i=0;i<S.players.length;i++) if(S.players[i].id===id) return S.players[i]; return null; }
-  function nameOf(id){ var p=byId(id); return p?p.name:"?"; }
-  // Full session label: type + format, plus " · Fixed Partner" when partners
-  // were locked. x is either a live session or a recorded one — both carry
-  // .singles, .format and .fixedPartners.
+  // A player record with a blank/missing name used to render as an invisible,
+  // unclickable chip (button with no text but a real outline) — indistinguishable
+  // from a rendering bug. This makes a bad record visible instead of silently
+  // empty, so it can be spotted and fixed (or removed) on the Players tab.
+  function dispName(p){ return (p && p.name) ? p.name : "(unnamed)"; }
+  function nameOf(id){ var p=byId(id); return p?dispName(p):"?"; }
+  function formatLabel(fmt){
+    return fmt==="mexicano" ? "Mexicano" : "Americano";
+  }
+  function typeLabel(x){ return (x && x.singles) ? "Singles" : "Doubles"; }
+  // Full session label: format plus " · Fixed Partner" when partners were
+  // locked. x is either a live session or a recorded one — both carry
+  // .format and .fixedPartners.
   function sessionLabel(x){
-    return (x&&x.singles?"Singles ":"Doubles ")+(x&&x.format==="mexicano"?"Mexicano":"Americano")+
-      ((x&&x.fixedPartners)?" · Fixed Partner":"");
+    return typeLabel(x)+" "+formatLabel(x&&x.format)+((x&&x.fixedPartners)?" · Fixed Partner":"");
   }
 
   /* ---- Fixed Partner display grouping ----
@@ -832,8 +913,7 @@
      two teammates play every round together, they always finish a fixed
      session with identical share/wins/diff, so any per-player table/podium
      shows them as two adjacent, identical-looking rows. This groups them back
-     into the one team result that they actually are. Never applies to singles
-     — the toggle that produces .fixedPartners is hidden there.
+     into the one team result that they actually are.
      Team membership isn't stored as its own field on the record — it's
      derived from the rounds themselves (every court's a/b IS a fixed team,
      unchanged all night), so this also works for older recorded sessions. */
@@ -852,7 +932,7 @@
     return teams;
   }
   // Collapses a per-player standings table into one row per team when the
-  // record is Fixed Partner; passes any other record through unchanged.
+  // record is Fixed Partner; passes any other format through unchanged.
   function displayStandings(rec, table){
     var teams=teamsOfRecord(rec);
     if(!teams) return (table||[]).map(function(r){
@@ -870,8 +950,15 @@
       out.push({
         name: rows.map(function(r){ return r.name; }).join(" & "),
         ids: team.slice(), row: base,
+        // Identical across teammates in a fixed session (they share every
+        // round), so either one's numbers are the team's numbers — except
+        // rating, which stays genuinely per-player and is shown per player.
         share:base.share, wins:base.wins, diff:base.diff, pts:base.pts,
         against:base.against, played:base.played, raw:base.raw,
+        // Both teammates earn the same point value off a fixed session (they're
+        // tied with each other by definition), so show that one shared number
+        // rather than a summed total that would look like a different scale
+        // from every solo-format session next to it.
         monthPts: base.monthPts,
         ratings: rows.map(function(r){ return {name:r.name, after:r.after, rdAfter:r.rdAfter, delta:r.delta}; })
       });
@@ -997,7 +1084,7 @@
     var raw=myScore/total, f=dampFactor(target);
     var s=0.5+(raw-0.5)*f;
     if(!partner){
-      // singles: a direct 1v1 opponent, no team-averaging uncertainty
+      // singles: judged straight against the one opponent, no team averaging
       return {muj:(O1.elo-1500)/SCALE, phij:rdOf(O1)/SCALE,
               s:s, raw:raw, f:f, oppMean:O1.elo, oppRd:rdOf(O1)};
     }
@@ -1052,9 +1139,55 @@
       var x=t[id], tot=x.pts+x.against;
       x.raw   = tot ? x.pts/tot : 0;
       x.share = (x.pts + prior/2) / (tot + prior);
-      x.diff  = x.pts-x.against;
+      x.diff  = x.pts-x.against;             // point difference
+      x.mdiff = x.wins-(x.rounds-x.wins);    // matches won minus matches lost
+      x.wpct  = x.rounds ? x.wins/x.rounds : 0;
+      // win rate, shrunk the same way as points so a single match can't top the
+      // table and so playing one round more is never worth a place on its own
+      x.wrate = (x.wins + PRIOR_MATCHES/2) / (x.rounds + PRIOR_MATCHES);
     });
+    // head to head: point difference counted only in matches the two played on
+    // opposite sides. Partners rotate, so most pairs never meet.
+    var h2h={};
+    live.rounds.forEach(function(rd){
+      rd.courts.forEach(function(c){
+        if(c.sa===null||c.sb===null) return;
+        c.a.forEach(function(x){ c.b.forEach(function(y){
+          h2h[x+"|"+y]=(h2h[x+"|"+y]||0)+(c.sa-c.sb);
+          h2h[y+"|"+x]=(h2h[y+"|"+x]||0)+(c.sb-c.sa);
+        }); });
+      });
+    });
+    // hidden, so anything that walks the table by key never sees it as a player
+    Object.defineProperty(t,"__h2h",{value:h2h,enumerable:false});
     return t;
+  }
+
+  /* One ranking rule, used by the live table and by the recorded result so they
+     can never disagree:
+       1  matches won           — as a rate, so a player on six matches is not
+                                 behind a player on seven for playing less
+       2  points per match      — the margin, same normalisation
+       3  point difference
+       4  match difference   — won minus lost
+       5  head to head       — the two players' own matches against each other
+       6  current rating     — a deterministic last resort, so every device
+                               replays the same order */
+  function rankIds(t, ids){
+    var h2h=t.__h2h||{};
+    var out=ids.slice();
+    out.sort(function(a,b){
+      var A=t[a], B=t[b];
+      if(B.wrate!==A.wrate) return B.wrate-A.wrate;   // winning comes first
+      if(B.share!==A.share) return B.share-A.share;   // then the margin
+      if(B.diff!==A.diff)   return B.diff-A.diff;
+      if(B.mdiff!==A.mdiff) return B.mdiff-A.mdiff;
+      var h=h2h[a+"|"+b];
+      if(h!==undefined && h!==0) return -h;
+      var pa=byId(a), pb=byId(b);
+      return (pb?pb.elo:0)-(pa?pa.elo:0);
+    });
+    return out;
   }
   function playedCount(live){
     var n={};
@@ -1069,10 +1202,9 @@
 
   function pickPlaying(live){
     var out=live.out||[];
-    var per=(live.teamSize||2)*2;
-    var cap=live.courts*per, ids=live.attendees.filter(function(id){ return out.indexOf(id)<0; });
+    var cap=live.courts*4, ids=live.attendees.filter(function(id){ return out.indexOf(id)<0; });
     var n=ids.length;
-    var slots = n>=cap ? cap : Math.floor(n/per)*per;
+    var slots = n>=cap ? cap : Math.floor(n/4)*4;
     var played=playedCount(live);
     var sat={};
     ids.forEach(function(id){ sat[id]=live.rounds.length-played[id]; });
@@ -1091,7 +1223,7 @@
       for(var i=0;i<pool.length;i++) for(var j=i+1;j<pool.length;j++){
         var x=pool[i],y=pool[j];
         var s=partnerCount(live,x,y)*10;
-        if(!live.singles && live.mixed && byId(x).gender===byId(y).gender) s+=3;
+        if(live.mixed && byId(x).gender===byId(y).gender) s+=3;
         s+=Math.random()*0.5;
         if(bs===null||s<bs){bs=s;best=[x,y];}
       }
@@ -1112,16 +1244,6 @@
       return byId(y).elo-byId(x).elo;
     });
     var pairs=[];
-    if(live.singles){
-      // one ranked field, paired directly into 1v1 matchups
-      if(style==="similar"){                 // adjacent ranks — close, decisive matches
-        for(var i=0;i+1<ranked.length;i+=2) pairs.push([ranked[i],ranked[i+1]]);
-      } else {                                // balanced — top half against bottom half, mirrored
-        var half=Math.floor(ranked.length/2);
-        for(var i=0;i<half;i++) pairs.push([ranked[i],ranked[ranked.length-1-i]]);
-      }
-      return pairs;
-    }
     for(var i=0;i<ranked.length;i+=4){
       var q=ranked.slice(i,i+4);
       if(q.length<4) break;
@@ -1137,32 +1259,29 @@
   }
 
   function makeRound(live){
-    if(live.fixedPartners) return makeFixedRound(live);
+    /* Singles is fixed partners with a team of one: the pairing problem is
+       identical (locked teams, rotate opponents), so it reuses that path
+       rather than a second one that would need its own repeat avoidance. */
+    if(live.fixedPartners || live.singles) return makeFixedRound(live);
     var playing=pickPlaying(live);
-    var teamSize=live.teamSize||2;
-    if(playing.length<2*teamSize) return null;
+    if(playing.length<4) return null;
     var first=live.rounds.length===0;
     var pairs=(live.format==="mexicano" && !first) ? pairMexicano(live,playing) : pairAmericano(live,playing);
     notePartners(live,pairs);
     var courts=[];
-    if(live.singles){
-      pairs.forEach(function(pr){ courts.push({a:[pr[0]],b:[pr[1]],sa:null,sb:null}); });
-    } else {
-      for(var i=0;i+1<pairs.length;i+=2){
-        courts.push({a:pairs[i],b:pairs[i+1],sa:null,sb:null});
-      }
+    for(var i=0;i+1<pairs.length;i+=2){
+      courts.push({a:pairs[i],b:pairs[i+1],sa:null,sb:null});
     }
     var out=live.out||[];
     var sitting=live.attendees.filter(function(id){ return playing.indexOf(id)<0 && out.indexOf(id)<0; });
     return {courts:courts,sitting:sitting};
   }
 
-  /* ---- Fixed Partner: only ever used for doubles (teamSize 2) — the setup
-     UI hides the toggle entirely for singles. Teams are locked for the whole
-     session at setup; only which TEAM plays which TEAM rotates round to
-     round. Opponent scheduling follows whichever format was picked: fewest-
-     repeat-opponent under Americano, rank-seeded under Mexicano — mirroring
-     pickPlaying/pairAmericano/pairMexicano one level up. ---- */
+  /* ---- Fixed Partner: teams are locked for the whole session at setup.
+     Only which TEAM plays which TEAM rotates round to round — never who's
+     partnered with whom. Sit-out fairness and opponent-repeat avoidance
+     both operate on the team as the unit, mirroring pickPlaying/pairAmericano
+     one level up. ---- */
   function teamKey(team){ return team.slice().sort().join("+"); }
   function teamOf(live,id){
     var t=(live.teams||[]).filter(function(tm){ return tm.indexOf(id)>=0; })[0];
@@ -1182,7 +1301,8 @@
   }
   function pickPlayingTeams(live){
     var out=live.out||[];
-    var teams=(live.teams||[]).filter(function(t){ return out.indexOf(t[0])<0 && out.indexOf(t[1])<0; });
+    var teams=(live.teams||[]).filter(function(t){
+      return t.every(function(id){ return out.indexOf(id)<0; }); });
     var cap=live.courts*2, n=teams.length;
     var slots = n>=cap ? cap : Math.floor(n/2)*2;
     var played=playedTeamCount(live);
@@ -1225,14 +1345,19 @@
   // Mexicano-style: rank locked teams by how the session's gone so far (both
   // partners always carry identical stats, so either one's numbers rank the
   // team) and match adjacent ranks — the team-level analog of pairMexicano's
-  // seeding, minus the partner-pairing step since partners are fixed.
+  // 1v4/2v3 seeding, minus the partner-pairing step since partners are fixed.
+  function teamElo(team){
+    var n=0, s=0;
+    team.forEach(function(id){ var p=byId(id); if(p){ s+=p.elo; n++; } });
+    return n ? s/n : 1500;
+  }
   function pairFixedMexicanoOpponents(live,playingTeams){
     var t=sessionTotals(live);
     var ranked=playingTeams.slice().sort(function(x,y){
       var rx=t[x[0]], ry=t[y[0]];
       if(ry.share!==rx.share) return ry.share-rx.share;
       if(ry.diff!==rx.diff) return ry.diff-rx.diff;
-      var ex=(byId(x[0]).elo+byId(x[1]).elo)/2, ey=(byId(y[0]).elo+byId(y[1]).elo)/2;
+      var ex=teamElo(x), ey=teamElo(y);
       return ey-ex;
     });
     var matchups=[];
@@ -1255,6 +1380,7 @@
   }
 
   /* ---------------- rendering ---------------- */
+  // a side is one name in singles, two joined in doubles
   function sideLabel(ids){
     if(ids.length<2) return esc(nameOf(ids[0]));
     return esc(nameOf(ids[0]))+' <small>&amp; '+esc(nameOf(ids[1]))+'</small>';
@@ -1297,7 +1423,7 @@
       host.innerHTML=list.map(function(p){
         var b=bandOf(p);
         return '<div class="prow"'+(p.hidden?' style="opacity:.55"':'')+'>'+
-          '<span class="nm">'+esc(p.name)+tag(p)+
+          '<span class="nm">'+esc(dispName(p))+tag(p)+
           (p.hidden?'<span class="prov">archived</span>':"")+'</span>'+
           '<span class="el"><span class="band '+b.css+'">'+b.name+'</span>'+
             '<b>'+Math.round(p.elo)+'</b> ±'+Math.round(rdOf(p))+
@@ -1435,7 +1561,7 @@
 
   function playerDetail(p){
     var ss=playerSessions(p.id);
-    if(!ss.length) return '<div class="pdetail"><div class="empty">No sessions recorded for '+esc(p.name)+' yet.</div></div>';
+    if(!ss.length) return '<div class="pdetail"><div class="empty">No sessions recorded for '+esc(dispName(p))+' yet.</div></div>';
     var vals=[ss[0].before].concat(ss.map(function(x){return x.after}));
     var weekly='<table class="wk"><thead><tr><th class="l">Session</th><th>Pos</th><th>W</th><th>Share</th><th>Rating</th><th>Δ</th><th>Mth pts</th></tr></thead><tbody>'+
       ss.slice().reverse().map(function(x){
@@ -1480,11 +1606,12 @@
     if(!live){ renderSetup(); return; }
 
     el("live-title").textContent=(live.format==="mexicano"
-      ? (live.singles?"Singles ":"Doubles ")+"Mexicano ("+((live.mexPair||"balanced")==="similar"?"similar":"balanced")+")"+(live.fixedPartners?" · Fixed Partner":"")
+      ? typeLabel(live)+" Mexicano"+((live.singles||live.fixedPartners)?"":" ("+((live.mexPair||"balanced")==="similar"?"similar":"balanced")+")")+(live.fixedPartners?" · Fixed Partner":"")
       : sessionLabel(live))+" · "+live.date;
     var outN=(live.out||[]).length;
     el("live-sub").textContent=live.courts+" courts · "+modeOf(live).blurb(live.target)+" · "+
-      (live.attendees.length-outN)+" playing"+(outN?" · "+outN+" sat out":"");
+      (live.attendees.length-outN)+" playing"+(outN?" · "+outN+" sat out":"")+
+      (live.rated===false?" · not counted toward ratings/league":"");
     if(el("lv-date").value!==live.date) el("lv-date").value=live.date;
     var findBox=el("lv-find");
     if(live.fixedPartners){
@@ -1503,7 +1630,7 @@
         if(t){ var other=byId(t[0]===id?t[1]:t[0]); if(other) partnerNote=' <small>+ '+esc(other.name)+'</small>'; }
       }
       return '<button class="chip" data-sit="'+id+'" aria-pressed="'+(out?"false":"true")+'">'+
-        esc(p.name)+partnerNote+(out?" · out":"")+'</button>';
+        esc(dispName(p))+partnerNote+(out?" · out":"")+'</button>';
     }).join("");
     el("lv-chips").querySelectorAll("[data-sit]").forEach(function(b){
       b.addEventListener("click",function(){
@@ -1621,29 +1748,28 @@
     el("ss-agst").textContent = G?"GA":"PA";
     el("ss-for").title  = G?"Games won":"Points won";
     el("ss-agst").title = G?"Games conceded":"Points conceded";
-    el("ss-foot").textContent = "Played = matches on court. Won = matches won. "+
-      (G?"GF/GA = games":"PF/PA = points")+" won and conceded. Share = "+(G?"GF":"PF")+
-      " ÷ ("+(G?"GF+GA":"PF+PA")+"), so sitting out never costs you and the rotation never has to finish. "+
-      "For the ranking, everyone is credited with "+PRIOR_MATCHES+" notional even matches, which is why "+
-      "someone who has played only a round or two sits nearer the middle until they have played more.";
+    el("ss-foot").textContent = "Winning the night comes first: ranked on win %, then points per match, "+
+      "then point difference, then matches won minus lost, then head to head. Both are counted per match, "+
+      "so playing one round more than everyone else is never worth a place on its own, and everyone is "+
+      "credited with "+PRIOR_MATCHES+" notional even matches until they have played a few. Margins still "+
+      "drive the ratings — those read every point. "+(G?"GF/GA = games":"PF/PA = points")+" won and conceded.";
     var rows=live.attendees.map(function(id){
       var x=t[id];
       return {id:id,pts:x.pts,against:x.against,rounds:x.rounds,wins:x.wins,
-              share:x.share,raw:x.raw,diff:x.diff};
-    }).sort(function(a,b){
-      if(b.share!==a.share) return b.share-a.share;
-      if(b.wins!==a.wins) return b.wins-a.wins;
-      if(b.diff!==a.diff) return b.diff-a.diff;
-      return byId(b.id).elo-byId(a.id).elo;
+              share:x.share,raw:x.raw,diff:x.diff,wpct:x.wpct};
     });
+    var order=rankIds(t, rows.map(function(r){ return r.id; }));
+    rows.sort(function(a,b){ return order.indexOf(a.id)-order.indexOf(b.id); });
     var maxR=rows.reduce(function(m,r){ return Math.max(m,r.rounds); },0);
     el("ss-body").innerHTML=rows.map(function(r,i){
       var p=byId(r.id);
       var cls=i===0?"p1":(i<3?"p2":"");
-      return '<tr class="'+cls+'"><td>'+(i+1)+'</td><td>'+esc(p.name)+tag(p)+'</td>'+
-        '<td>'+r.rounds+'</td><td>'+r.wins+'</td><td>'+r.pts+'</td><td>'+r.against+'</td>'+
+      return '<tr class="'+cls+'"><td>'+(i+1)+'</td><td>'+esc(dispName(p))+tag(p)+'</td>'+
+        '<td>'+r.rounds+'</td><td>'+r.wins+'</td>'+
+        '<td>'+(r.rounds?Math.round(r.wpct*100)+"%":"–")+'</td>'+
+        '<td>'+r.pts+'</td><td>'+r.against+'</td>'+
         '<td>'+(r.diff>0?"+":"")+r.diff+'</td>'+
-        '<td>'+(r.rounds?Math.round((r.raw!==undefined?r.raw:r.share)*100)+"%":"–")+
+        '<td>'+(r.rounds?(r.pts/r.rounds).toFixed(1):"–")+
         (r.rounds&&r.rounds<maxR?' <small class="n">('+r.rounds+' of '+maxR+')</small>':"")+
         '</td></tr>';
     }).join("");
@@ -1679,7 +1805,7 @@
       chips.innerHTML=list.map(function(p){
         var hidden = q && p.name.toLowerCase().indexOf(q)<0;   // kept only because selected
         return '<button class="chip" data-p="'+p.id+'" aria-pressed="'+(sel[p.id]?"true":"false")+'"'+
-          (hidden?' style="opacity:.7"':'')+'>'+esc(p.name)+'</button>';
+          (hidden?' style="opacity:.7"':'')+'>'+esc(dispName(p))+'</button>';
       }).join("");
       var none=el("att-none");
       var matches=all.filter(function(p){ return !q || p.name.toLowerCase().indexOf(q)>=0; }).length;
@@ -1723,12 +1849,12 @@
   function renderStep3Summary(){
     var host=el("setup-summary"); if(!host) return;
     var n=selectedIds().length, courts=parseInt(el("s-courts").value,10);
-    var singles=el("s-type").value==="singles";
-    var fmt=el("s-format").value, fixedOn=!singles && el("s-fixed").checked;
+    var fmt=el("s-format").value, fixedOn=el("s-fixed").checked;
     var M=MODES[el("s-mode").value]||MODES.fixedpts, tv=parseInt(el("s-target").value,10)||0;
     var pm=pairedMap(), paired=Object.keys(pm).length, unpaired=n-paired;
     var bits=[esc(el("s-date").value), courts+" court"+(courts===1?"":"s"),
-      sessionLabel({singles:singles,format:fmt,fixedPartners:fixedOn}), M.blurb(tv), n+" player"+(n===1?"":"s")];
+      (isSingles()?"Singles ":"Doubles ")+formatLabel(fmt)+(fixedOn?" · Fixed Partner":""),
+      M.blurb(tv), n+" player"+(n===1?"":"s")];
     if(fixedOn){
       bits.push((paired/2)+" pair"+(paired/2===1?"":"s")+" locked"+
         (unpaired>0? " — "+unpaired+" will be randomly paired at start" : ""));
@@ -1769,8 +1895,7 @@
   }
   function renderPairSetup(){
     var wrap=el("pair-wrap"); if(!wrap) return;
-    var singles=el("s-type").value==="singles";
-    var isFixed = !singles && el("s-fixed").checked;
+    var isFixed = el("s-fixed").checked;
     wrap.style.display = isFixed ? "" : "none";
     if(!isFixed) return;
     var ids=selectedIds();
@@ -1781,7 +1906,7 @@
     var sorted=ids.slice().sort(function(a,b){ return byId(a).name.localeCompare(byId(b).name); });
     el("pair-chips").innerHTML=sorted.map(function(id){
       var p=byId(id), partner=pm[id], pending=S.setupPending===id;
-      var label=esc(p.name)+(partner?' <small>+ '+esc(byId(partner).name)+'</small>':'');
+      var label=esc(dispName(p))+(partner?' <small>+ '+esc(dispName(byId(partner)))+'</small>':'');
       return '<button class="chip'+(pending?' new':'')+'" data-pair="'+id+'" aria-pressed="'+(partner?"true":"false")+'">'+label+'</button>';
     }).join("");
     var paired=Object.keys(pm).length;
@@ -1852,9 +1977,8 @@
   function updateSetupHint(){
     var n=selectedIds().length, courts=parseInt(el("s-courts").value,10);
     el("att-count").textContent=n?("· "+n+" selected"):"";
-    var singles=el("s-type").value==="singles";
-    var per=singles?2:4;
-    var isFixed=!singles && el("s-fixed").checked;
+    var isFixed=el("s-fixed").checked;
+    var per=minPlayers();
     var cap=courts*per;
     var msg;
     if(n<per) msg="Select at least "+per+" players.";
@@ -1864,7 +1988,7 @@
     var M=MODES[el("s-mode").value]||MODES.fixedpts;
     var tv=parseInt(el("s-target").value,10)||0;
     var ok=n>=per;
-    if(isFixed && n>=per){
+    if(isFixed && n>=4){
       var pm=pairedMap(), paired=Object.keys(pm).length, unpaired=n-paired;
       if(unpaired>0){
         msg=(paired/2)+" fixed pair"+(paired/2===1?"":"s")+" formed — "+unpaired+" player"+(unpaired===1?"":"s")+
@@ -1987,7 +2111,13 @@
     el("close-mo-name").textContent=monthName(k);
     var closed=S.months[k]&&S.months[k].closed;
     el("btn-close-month").disabled=!!closed;
-    var rows=activePlayers().map(function(p){
+    var fb=el("mo-filter");
+    var played=activePlayers().filter(function(p){ ensureMonth(p,k); return p.ms[k]>0; });
+    fb.innerHTML=segHTML("moG",GENDER_OPTS)+
+      '<span class="count">'+played.filter(function(p){return genderOK(p,"moG")}).length+
+      ' of '+played.length+' shown</span>';
+    wireFilter(fb, renderMonth);
+    var rows=activePlayers().filter(function(p){ return genderOK(p,"moG"); }).map(function(p){
       ensureMonth(p,k);
       return {p:p,best:best3(p,k),pts:p.mp[k],sess:p.ms[k],delta:(p.md&&p.md[k])||0};
     }).filter(function(r){ return r.sess>0; })
@@ -1998,7 +2128,9 @@
         if(b.pts!==a.pts) return b.pts-a.pts;       // then everything played
         return b.p.elo-a.p.elo;
       });
-    if(!rows.length){ el("mo-body").innerHTML='<tr><td colspan="6"><div class="empty">No sessions played this month yet.</div></td></tr>'; }
+    if(!rows.length){ el("mo-body").innerHTML='<tr><td colspan="7"><div class="empty">'+
+      (played.length? "Nobody in this filter has played this month." : "No sessions played this month yet.")+
+      '</div></td></tr>'; }
     else{
       var rank=0;
       el("mo-body").innerHTML=rows.map(function(r){
@@ -2038,19 +2170,73 @@
     }
   }
 
+  /* --- filters ---
+     Filters are a view, not a result: they never touch points or ratings,
+     only which rows show and how the visible rows are numbered. Kept per
+     device (not synced) because what one host wants to look at is not a
+     league fact. */
+  // Held outside the league store, so a sync never resets someone's view and
+  // one host's filter never travels to another device.
+  var FILT_KEY="tf-tennis-filters-v1", FILT=null;
+  function F(){
+    if(!FILT){ try{ FILT=JSON.parse(window.localStorage.getItem(FILT_KEY)||"{}")||{}; }catch(e){ FILT={}; } }
+    return FILT;
+  }
+  function saveFilt(){ try{ window.localStorage.setItem(FILT_KEY, JSON.stringify(F())); }catch(e){} }
+  function segHTML(key, opts){
+    var cur=F()[key]||opts[0][0];
+    return '<span class="seg" role="group">'+opts.map(function(o){
+      return '<button type="button" data-fk="'+key+'" data-fv="'+o[0]+'" aria-pressed="'+
+        (cur===o[0]?"true":"false")+'">'+o[1]+'</button>';
+    }).join("")+'</span>';
+  }
+  function togHTML(key,label){
+    return '<label class="tog"><input type="checkbox" data-fk="'+key+'"'+(F()[key]?" checked":"")+'> '+label+'</label>';
+  }
+  function wireFilter(host, redraw){
+    host.querySelectorAll("button[data-fk]").forEach(function(b){
+      b.addEventListener("click",function(){ F()[b.dataset.fk]=b.dataset.fv; saveFilt(); redraw(); });
+    });
+    host.querySelectorAll("input[data-fk]").forEach(function(c){
+      c.addEventListener("change",function(){ F()[c.dataset.fk]=c.checked; saveFilt(); redraw(); });
+    });
+  }
+  var GENDER_OPTS=[["all","All"],["M","Men"],["F","Women"]];
+  function genderOK(p,key){ var g=F()[key]||"all"; return g==="all" || p.gender===g; }
+
   /* --- ratings --- */
   function renderRatings(){
-    var rows=activePlayers().sort(function(a,b){return b.elo-a.elo});
-    if(!rows.length){ el("rt-body").innerHTML='<tr><td colspan="5"><div class="empty">No players yet.</div></td></tr>'; el("rt-cats").innerHTML=""; return; }
+    var everyone=activePlayers().sort(function(a,b){return b.elo-a.elo});
+    var fb=el("rt-filter");
+    var divs=[["all","All"]].concat(BANDS.map(function(b){ return [b.name, b.name.replace("Div ","D")]; }));
+    var rows=everyone.filter(function(p){
+      if(!genderOK(p,"rtG")) return false;
+      var b=bandOf(p), d=F().rtD||"all";
+      if(F().rtHide && b.name==="Settling") return false;
+      if(d!=="all" && b.name!==d) return false;
+      return true;
+    });
+    fb.innerHTML=segHTML("rtG",GENDER_OPTS)+segHTML("rtD",divs)+
+      togHTML("rtHide","Hide settling")+
+      '<span class="count">'+rows.length+' of '+everyone.length+' shown</span>';
+    wireFilter(fb, renderRatings);
+    if(!everyone.length){ el("rt-body").innerHTML='<tr><td colspan="7"><div class="empty">No players yet.</div></td></tr>'; el("rt-cats").innerHTML=""; return; }
+    if(!rows.length){
+      el("rt-body").innerHTML='<tr><td colspan="7"><div class="empty">'+
+        ((F().rtD||"all")!=="all"
+          ? "Nobody is in "+F().rtD+" yet"+(F().rtHide?"":" — settling players have no division")+"."
+          : "Nobody matches these filters.")+'</div></td></tr>';
+    } else
     el("rt-body").innerHTML=rows.map(function(p,i){
       var b=bandOf(p);
       return '<tr class="'+(i===0?"p1":(i<3?"p2":""))+'"><td>'+(i+1)+'</td>'+
-        '<td>'+esc(p.name)+tag(p)+'</td>'+
+        '<td>'+esc(dispName(p))+tag(p)+'</td>'+
         '<td><span class="band '+b.css+'">'+b.name+'</span></td>'+
         '<td>'+(p.matches||0)+'</td><td>±'+Math.round(rdOf(p))+'</td>'+
         '<td>'+Math.round(p.peak||p.elo)+'</td><td>'+Math.round(p.elo)+'</td></tr>';
     }).join("");
-    el("rt-sub").textContent=rows.length+" rated players";
+    el("rt-sub").textContent=everyone.length+" rated players";
+    rows=everyone;   // the category cards always describe the whole club
     function top(g){
       var f=rows.filter(function(p){return p.gender===g});
       return f.length? esc(f[0].name)+" · "+Math.round(f[0].elo) : "—";
@@ -2072,12 +2258,13 @@
     if(!h.length){ el("se-list").innerHTML='<div class="empty">No sessions recorded yet.</div>'; el("se-detail").innerHTML=""; return; }
     el("se-list").innerHTML=h.map(function(x){
       var M=MODES[x.mode]||MODES.fixedpts;
-      var pod=displayStandings(x, x.table).slice(0,3)
+      var pod = displayStandings(x, x.table).slice(0,3)
         .map(function(r,i){ return (i+1)+". "+esc(r.name); }).join("  ");
       return '<div class="selog" data-s="'+x.id+'" aria-expanded="'+(S.seOpen===x.id?"true":"false")+'">'+
         '<span class="dt">'+esc(x.date)+'</span>'+
         '<span class="meta">'+sessionLabel(x)+' · '+M.blurb(x.target)+
-          ' · '+x.players+' players · '+(x.rounds_n||(x.rounds&&x.rounds.length)||0)+' rounds</span>'+
+          ' · '+x.players+' players · '+(x.rounds_n||(x.rounds&&x.rounds.length)||0)+' rounds'+
+          (x.rated===false?' · <b>not rated</b>':'')+'</span>'+
         '<span class="pod"><b>'+pod+'</b></span></div>';
     }).join("");
     el("se-list").querySelectorAll(".selog").forEach(function(row){
@@ -2095,9 +2282,13 @@
     var M=MODES[x.mode]||MODES.fixedpts, G=(M.unit==="games");
     var damp=x.damp!==undefined?x.damp:1;
 
-    var std='<div class="card"><div class="card-h">'+esc(x.date)+' · final standing</div>'+
-      '<table><thead><tr><th></th><th>Player</th><th>Played</th><th>Won</th>'+
-      '<th>'+(G?"GF":"PF")+'</th><th>'+(G?"GA":"PA")+'</th><th>Share</th><th>Month pts</th><th>Rating</th><th>±</th><th>Δ</th></tr></thead><tbody>'+
+    var notRated = x.rated===false ? '<div class="banner" style="display:block;margin-bottom:12px">'+
+      'This session was not counted toward ratings, division or the monthly league — scores below are the night\'s '+
+      'record only. Rating/Δ columns show no movement.</div>' : '';
+
+    var std=notRated+'<div class="card"><div class="card-h">'+esc(x.date)+' · final standing</div>'+
+      '<table><thead><tr><th></th><th>Player</th><th>Played</th><th>Won</th><th>Win %</th>'+
+      '<th>'+(G?"GF":"PF")+'</th><th>'+(G?"GA":"PA")+'</th><th>Per match</th><th>Month pts</th><th>Rating</th><th>±</th><th>Δ</th></tr></thead><tbody>'+
       displayStandings(x, x.table).map(function(r,i){
         var cls=i===0?"p1":(i<3?"p2":"");
         // A Fixed Partner row is one team, but rating is still genuinely
@@ -2114,8 +2305,10 @@
           return '<span class="'+(rt.delta>0?"up":(rt.delta<0?"dn":""))+'">'+fmtSigned(rt.delta)+'</span>';
         }).join("<br>");
         return '<tr class="'+cls+'"><td>'+(i+1)+'</td><td>'+esc(r.name)+'</td>'+
-          '<td>'+r.played+'</td><td>'+r.wins+'</td><td>'+r.pts+'</td><td>'+r.against+'</td>'+
-          '<td>'+Math.round((r.raw!==undefined?r.raw:r.share)*100)+'%</td><td>'+r.monthPts+'</td>'+
+          '<td>'+r.played+'</td><td>'+r.wins+'</td>'+
+          '<td>'+(r.played?Math.round(100*r.wins/r.played)+"%":"–")+'</td>'+
+          '<td>'+r.pts+'</td><td>'+r.against+'</td>'+
+          '<td>'+(r.played?(r.pts/r.played).toFixed(1):"–")+'</td><td>'+fmtPts(r.monthPts)+'</td>'+
           '<td>'+ratingCell+'</td><td>'+rdCell+'</td><td>'+deltaCell+'</td></tr>';
       }).join("")+'</tbody></table></div>';
 
@@ -2149,7 +2342,7 @@
       '</tr>';
     }).join("");
 
-    host.innerHTML=std+
+    var ratingCard = x.rated===false ? '' :
       '<div class="card"><div class="card-h">Rating working · '+(x.workings||[]).length+' matches</div>'+
       '<div class="card-b">'+formula+
       '<div style="overflow-x:auto"><table class="wk"><thead><tr>'+
@@ -2161,6 +2354,8 @@
       'No per-match rating change: Glicko-2 settles the whole session at once. '+
       'Each player\'s move for the night is in the table above.</p>'+
       '</div></div>';
+
+    host.innerHTML=std+ratingCard;
   }
 
   /* --- hall of fame --- */
@@ -2177,7 +2372,9 @@
         var d=Math.round(r.delta);
         return '<tr class="'+cls+'"><td>'+(ok?rank:"–")+'</td>'+
           '<td class="l">'+esc(r.p.name)+(ok?"":'<span class="prov">'+
-            (dim?"settling":r.sess+"/"+MIN_SESSIONS)+'</span>')+'</td>'+
+            (dim ? (bandOf(r.p).name==="Settling" ? "settling"
+                                                  : bandOf(r.p).name+" next month")
+                 : r.sess+"/"+MIN_SESSIONS)+'</span>')+'</td>'+
           '<td>'+r.sess+'</td><td>'+r.best+'</td><td>'+r.pts+'</td>'+
           '<td>'+Math.round(r.p.elo)+'</td>'+
           '<td class="'+(d>0?"up":(d<0?"dn":""))+'">'+(d>0?"+":"")+d+'</td></tr>';
@@ -2196,8 +2393,18 @@
         '</div>'+head+body(g.rows,false)+'</tbody></table></div>';
     }).join("");
     if(dt.settling.length){
+      var placed=dt.settling.filter(function(r){ return bandOf(r.p).name!=="Settling"; }).length;
+      var firstMonth=!dt.groups.length;
       html+='<div class="dvg"><div class="dvh"><span class="band b0">Settling</span>'+
-        '<span class="who">no division this month</span></div>'+
+        '<span class="who">'+(firstMonth ? "unrated when the month opened" : "no division this month")+'</span></div>'+
+        (firstMonth
+          ? '<p class="dvnote">Divisions are fixed at the rating you start the month on, and nobody had '+
+            'one when this month opened — so no division prize can pay this month. That is the rule '+
+            'working, not a fault. '+(placed
+              ? '<b>'+placed+' player'+(placed===1?" has":"s have")+' already settled</b> and '+
+                'will start next month in the division shown.'
+              : 'A rating settles after about four sessions.')+'</p>'
+          : "")+
         head+body(dt.settling,true)+'</tbody></table></div>';
     }
     el("dv-body").innerHTML = html || '<div class="empty">No sessions played this month yet.</div>';
@@ -2289,35 +2496,41 @@
     }
     updateSetupHint();
   }
+  function isSingles(){ return el("s-type").value==="singles"; }
+  function minPlayers(){ return isSingles() ? 2 : 4; }
+  /* The pairing dropdown describes how a quad is split into two pairs, which
+     only means anything when a side has two players. Singles and fixed-partner
+     sessions both pair whole teams by rank instead, so the control is hidden
+     rather than left on screen doing nothing. */
   function refreshMexWrap(){
-    var singles=el("s-type").value==="singles";
-    el("mex-wrap").style.display = (el("s-format").value==="mexicano" && !(!singles && el("s-fixed").checked)) ? "" : "none";
+    var byRank = isSingles() || el("s-fixed").checked;
+    el("mex-wrap").style.display =
+      (el("s-format").value==="mexicano" && !byRank) ? "" : "none";
+  }
+  /* Singles has no partner, so neither doubles-only option applies. They are
+     hidden rather than disabled, and forced off so a box ticked before the
+     switch can't leak into the session. */
+  function applyTeamType(){
+    var singles=isSingles();
+    el("doubles-opts").style.display = singles ? "none" : "";
+    if(singles){ el("s-mixed").checked=false; el("s-fixed").checked=false; }
+    refreshMexWrap();
+    renderPairSetup();
+    updateSetupHint();
   }
   el("s-format").addEventListener("change",function(){
     refreshMexWrap();
     renderPairSetup();
     updateSetupHint();
   });
-  function applyTeamType(){
-    var singles=el("s-type").value==="singles";
-    el("mixed-wrap").style.display = singles ? "none" : "flex";
-    el("fixed-wrap").style.display = singles ? "none" : "flex";
-    if(singles && el("s-fixed").checked){
-      el("s-fixed").checked=false;
-      S.setupPairs=[]; S.setupPending=null;
-    }
-    var opts=el("s-mexpair").options;
-    opts[0].textContent = singles ? "Balanced — top v bottom" : "Balanced — 1st+4th v 2nd+3rd";
-    opts[1].textContent = singles ? "Similar — closest ranks" : "Similar — 1st+2nd v 3rd+4th";
-    refreshMexWrap();
-    renderPairSetup();
-    updateSetupHint();
-  }
   el("s-type").addEventListener("change",applyTeamType);
   el("s-fixed").addEventListener("change",function(){
     refreshMexWrap();
     renderPairSetup();
     updateSetupHint();
+  });
+  el("s-rated").addEventListener("change",function(){
+    el("rated-hint").style.display = el("s-rated").checked ? "none" : "";
   });
   el("s-mode").addEventListener("change",function(){ el("s-target").dataset.touched=""; modeDefaults(); });
   el("s-target").addEventListener("input",function(){ el("s-target").dataset.touched="1"; updateSetupHint(); });
@@ -2328,8 +2541,7 @@
   el("btn-step1-next").addEventListener("click",function(){ setStep(2); });
   el("btn-step2-back").addEventListener("click",function(){ setStep(1); });
   el("btn-step2-next").addEventListener("click",function(){
-    var singles=el("s-type").value==="singles";
-    if(selectedIds().length<(singles?2:4)) return;
+    if(selectedIds().length<minPlayers()) return;
     setStep(3);
   });
   el("btn-step3-back").addEventListener("click",function(){ setStep(2); });
@@ -2338,9 +2550,10 @@
   // partner team list to use (already resolved — manual pairs plus any
   // auto-paired leftovers), or null when fixed partners isn't on.
   function reallyStart(ids,finalPairs){
-    var singles=el("s-type").value==="singles";
+    var singles=isSingles();
     var fixedOn=!singles && el("s-fixed").checked;
     S.live={
+      singles:singles, teamSize: singles?1:2,
       date:el("s-date").value||new Date().toISOString().slice(0,10),
       courts:parseInt(el("s-courts").value,10),
       format:el("s-format").value,
@@ -2349,14 +2562,19 @@
       mode:el("s-mode").value,
       mexPair:el("s-mexpair").value,
       mixed: singles ? false : el("s-mixed").checked,
-      singles:singles, teamSize: singles?1:2,
+      rated:el("s-rated").checked,
       attendees:ids, out:[], rounds:[], partnerHist:{}
     };
-    if(fixedOn){
+    if(singles){
+      // every player is their own team, so the fixed-partner rotation handles
+      // the one thing singles actually needs: not facing the same person twice
+      S.live.teams=ids.map(function(id){ return [id]; });
+      S.live.oppHist={};
+    } else if(fixedOn){
       S.live.teams=(finalPairs||[]).map(function(pr){ return pr.slice(); });
       S.live.oppHist={};
       // anyone dropped for lacking a partner never joined this session
-      var teamed={}; S.live.teams.forEach(function(t){ teamed[t[0]]=1; teamed[t[1]]=1; });
+      var teamed={}; S.live.teams.forEach(function(t){ t.forEach(function(id){ teamed[id]=1; }); });
       S.live.attendees=S.live.attendees.filter(function(id){ return teamed[id]; });
     }
     var r=makeRound(S.live);
@@ -2367,10 +2585,8 @@
 
   el("btn-start").addEventListener("click",function(){
     var ids=selectedIds();
-    var singles=el("s-type").value==="singles";
-    var per=singles?2:4;
-    if(ids.length<per) return;
-    var fixedOn=!singles && el("s-fixed").checked;
+    if(ids.length<minPlayers()) return;
+    var fixedOn=!isSingles() && el("s-fixed").checked;
     if(fixedOn){
       var pm=pairedMap();
       var unpaired=ids.filter(function(id){ return !pm[id]; });
@@ -2415,7 +2631,7 @@
                : avail.slice()).sort(function(a,b){return a.name.localeCompare(b.name)});
     var exact=q? nameClash(q) : null;
     var html=hits.slice(0,12).map(function(p){
-      return '<button class="chip" data-join="'+p.id+'">'+esc(p.name)+'</button>';
+      return '<button class="chip" data-join="'+p.id+'">'+esc(dispName(p))+'</button>';
     }).join("");
     if(q && !exact){
       html+='<button class="chip new" data-new="1">+ add “'+esc(S.walkQuery.trim())+'” as a new player</button>';
@@ -2490,7 +2706,8 @@
   function fmtPts(n){ return (Math.round(n*10)/10).toString(); }
   function pts(n){ return fmtPts(n)+(Math.abs(n)===1?" pt":" pts"); }
   function shareHead(kick,title,when){
-    return '<div class="sc-top"><div><div class="sc-kick">'+esc(kick)+'</div>'+
+    return '<div class="sc-top"><div><div class="sc-kick">'+
+      (practice?"PRACTICE · ":"")+esc(kick)+'</div>'+
       '<div class="sc-title">'+esc(title)+'</div>'+
       (when?'<div class="sc-when">'+esc(when)+'</div>':"")+'</div><div class="sc-dot"></div></div>';
   }
@@ -2550,12 +2767,12 @@
       var t=displayStandings(x, x.table);
       var tail = fmt==="screen" ? 7 : (fmt==="print" ? 14 : 8);
       var rest=t.slice(3,tail);
-      host.innerHTML=shareHead("Session result", sessionLabel(x)+" night",
-          prettyDate(x.date)+" · "+x.players+" players · "+M.blurb(x.target))+
+      host.innerHTML=shareHead("Session result", sessionLabel(x)+" night"+(x.rated===false?" — not counted":""),
+          prettyDate(x.date)+" · "+x.players+" players · "+(x.rated===false?"just for fun":M.blurb(x.target)))+
         '<div class="sc-body">'+
           podiumBlock(t.slice(0,3),
             function(r){ return pts(r.monthPts); },
-            function(r){ return Math.round((r.raw!==undefined?r.raw:r.share)*100)+"%"; })+
+            function(r){ return r.played ? r.wins+" of "+r.played+" won" : ""; })+
           (rest.length?'<div class="sc-rows'+(fmt==="screen"&&rest.length>2?" two":"")+'">'+rest.map(function(r,i){
             return '<div class="sc-row"><span class="r">'+(i+4)+'</span><span class="n">'+esc(r.name)+'</span>'+
               '<span class="v">'+fmtPts(r.monthPts)+'<small>'+(Math.abs(r.monthPts)===1?"pt":"pts")+'</small></span></div>';
@@ -2614,7 +2831,7 @@
           var b=bandOf(p);
           return '<div class="sc-row'+(i<3?" top":"")+(b.name==="Settling"?" dim":"")+'">'+
             '<span class="r">'+(i+1)+'</span>'+
-            '<span class="n">'+esc(p.name)+'<small class="sub"> '+esc(b.name)+'</small></span>'+
+            '<span class="n">'+esc(dispName(p))+'<small class="sub"> '+esc(b.name)+'</small></span>'+
             '<span class="v">'+Math.round(p.elo)+'<small>±'+Math.round(rdOf(p))+'</small></span></div>';
         }).join("")+'</div></div>'+
         shareFoot((settled.length>cap?"+"+(settled.length-cap)+" more · ":"")+"@thefieldjakarta");
@@ -2816,6 +3033,7 @@
       date: live.date, format: live.format, mode: live.mode||"fixedpts",
       mexPair: live.mexPair||"balanced", singles: !!live.singles,
       fixedPartners: !!live.fixedPartners,
+      rated: live.rated!==false,
       target: live.target, courts: live.courts,
       attendees: live.attendees.slice(),
       rounds: live.rounds.map(function(rd){
@@ -2831,6 +3049,7 @@
   function applyRecord(rec){
     var k=monthKey(rec.date);
     if(!S.months[k]) S.months[k]={closed:false,podium:null};
+    var rated=rec.rated!==false;   // host opted this session out of ratings/league at setup
 
     var scored=[];
     rec.rounds.forEach(function(rd){
@@ -2840,45 +3059,53 @@
     var snapshot={};
     S.players.forEach(function(p){ snapshot[p.id]={elo:p.elo, rd:rdOf(p), vol:volOf(p)}; });
 
-    var bucket={}, workings=[];
-    scored.forEach(function(c){
-      var d=matchDetail(c.a,c.b,c.sa,c.sb,rec.target);
-      if(!d) return;
-      var perPlayer={};
-      [[c.a,c.b,c.sa,c.sb],[c.b,c.a,c.sb,c.sa]].forEach(function(x){
-        var team=x[0], opp=x[1], mine=x[2], theirs=x[3];
-        team.forEach(function(id,idx){
-          var r=matchResult(id, team[1-idx], opp, mine, theirs, rec.target);
-          if(!r) return;
-          bucket[id]=bucket[id]||[]; bucket[id].push(r); perPlayer[id]=r;
+    // An unrated session skips the Glicko-2 math entirely — no bucket, no
+    // matchResult/matchDetail calls, no audit workings — so there is nothing
+    // for it to leak into anyone's rating, division band, tiebreak or
+    // "most improved" figure. It still shows who won on the night (below),
+    // just not who gained or lost rating from it.
+    var results={}, workings=[];
+    if(rated){
+      var bucket={};
+      scored.forEach(function(c){
+        var d=matchDetail(c.a,c.b,c.sa,c.sb,rec.target);
+        if(!d) return;
+        var perPlayer={};
+        [[c.a,c.b,c.sa,c.sb],[c.b,c.a,c.sb,c.sa]].forEach(function(x){
+          var team=x[0], opp=x[1], mine=x[2], theirs=x[3];
+          team.forEach(function(id,idx){
+            var r=matchResult(id, team[1-idx], opp, mine, theirs, rec.target);
+            if(!r) return;
+            bucket[id]=bucket[id]||[]; bucket[id].push(r); perPlayer[id]=r;
+          });
+        });
+        workings.push({
+          a:c.a.map(nameOf), b:c.b.map(nameOf), ids:{a:c.a.slice(),b:c.b.slice()},
+          sa:c.sa, sb:c.sb, ra:d.ra, rb:d.rb, raw:d.raw, f:d.f, actual:d.actual, exp:d.exp,
+          oppRdA:perPlayer[c.a[0]]?perPlayer[c.a[0]].oppRd:null
         });
       });
-      workings.push({
-        a:c.a.map(nameOf), b:c.b.map(nameOf), ids:{a:c.a.slice(),b:c.b.slice()},
-        sa:c.sa, sb:c.sb, ra:d.ra, rb:d.rb, raw:d.raw, f:d.f, actual:d.actual, exp:d.exp,
-        oppRdA:perPlayer[c.a[0]]?perPlayer[c.a[0]].oppRd:null
-      });
-    });
-
-    var results={};
-    S.players.forEach(function(p){ results[p.id]=glicko(p, bucket[p.id]||[]); });
+      S.players.forEach(function(p){ results[p.id]=glicko(p, bucket[p.id]||[]); });
+    }
     var matchesPlayed={};
     scored.forEach(function(c){
       c.a.concat(c.b).forEach(function(id){ matchesPlayed[id]=(matchesPlayed[id]||0)+1; });
     });
 
     var t=sessionTotals({attendees:rec.attendees, rounds:rec.rounds, target:rec.target});
-    var ranked=rec.attendees.filter(function(id){ return t[id]&&t[id].rounds>0; })
-      .map(function(id){ return {id:id,share:t[id].share,wins:t[id].wins,diff:t[id].diff}; })
-      .sort(function(a,b){ return (b.share-a.share)||(b.wins-a.wins)||(b.diff-a.diff)
-                                  ||(byId(b.id)?byId(b.id).elo:0)-(byId(a.id)?byId(a.id).elo:0); });
+    var ranked=rankIds(t, rec.attendees.filter(function(id){ return t[id]&&t[id].rounds>0; }))
+      .map(function(id){ return {id:id,share:t[id].share,wins:t[id].wins,wrate:t[id].wrate,
+                                 diff:t[id].diff,mdiff:t[id].mdiff}; });
 
     /* Players who finish genuinely level share the points for the places they
        occupy. Two tied for 1st take (10+8)/2 = 9 each. Without this the last
        tiebreak — existing rating — would hand out the month's points on a
-       night where nobody separated themselves, which is exactly backwards. */
+       night where nobody separated themselves, which is exactly backwards.
+       When the session isn't rated, this loop still runs so the standings
+       order is known (for display), it just never writes to a player. */
     function place(i){ return i<SESSION_POINTS.length ? SESSION_POINTS[i] : 1; }
-    function level(a,b){ return a.share===b.share && a.wins===b.wins && a.diff===b.diff; }
+    function level(a,b){ return a.wrate===b.wrate && a.share===b.share &&
+                                a.diff===b.diff && a.mdiff===b.mdiff; }
     var i0=0;
     while(i0<ranked.length){
       var i1=i0;
@@ -2887,37 +3114,47 @@
       for(var q=i0;q<=i1;q++) pool+=place(q);
       var each=Math.round((pool/(i1-i0+1))*100)/100;
       for(var w=i0;w<=i1;w++){
-        var pl=byId(ranked[w].id); if(!pl) continue;
-        ensureMonth(pl,k);
-        pl.mp[k]=Math.round((pl.mp[k]+each)*100)/100;
-        pl.msp[k].push(each); pl.ms[k]+=1;
         ranked[w].got=each; ranked[w].tied=(i1>i0);
+        if(rated){
+          var pl=byId(ranked[w].id); if(!pl) continue;
+          ensureMonth(pl,k);
+          pl.mp[k]=Math.round((pl.mp[k]+each)*100)/100;
+          pl.msp[k].push(each); pl.ms[k]+=1;
+        }
       }
       i0=i1+1;
     }
-    S.players.forEach(function(p){
-      var out=results[p.id]; if(!out) return;
-      ensureMonth(p,k);
-      var before=snapshot[p.id].elo;
-      p.elo=out.elo; p.rd=out.rd; p.vol=out.vol;
-      if(matchesPlayed[p.id]){
-        p.matches=(p.matches||0)+matchesPlayed[p.id];
-        p.peak=Math.max(p.peak||START_ELO,p.elo);
-      }
-      if(!p.md) p.md={};
-      var dl=p.elo-before;
-      if(dl) p.md[k]=(p.md[k]||0)+dl;
-    });
+    if(rated){
+      S.players.forEach(function(p){
+        var out=results[p.id]; if(!out) return;
+        ensureMonth(p,k);
+        var before=snapshot[p.id].elo;
+        p.elo=out.elo; p.rd=out.rd; p.vol=out.vol;
+        if(matchesPlayed[p.id]){
+          p.matches=(p.matches||0)+matchesPlayed[p.id];
+          p.peak=Math.max(p.peak||START_ELO,p.elo);
+        }
+        if(!p.md) p.md={};
+        var dl=p.elo-before;
+        if(dl) p.md[k]=(p.md[k]||0)+dl;
+      });
+    }
 
     return {
-      month:k, players:rec.attendees.length, rounds:rec.rounds.length,
+      month:k, players:rec.attendees.length, rounds:rec.rounds.length, rated:rated,
       table:ranked.map(function(r,i){
+        var after = rated && results[r.id] ? results[r.id].elo : snapshot[r.id].elo;
+        var rdAfter = rated && results[r.id] ? results[r.id].rd : snapshot[r.id].rd;
         return {name:nameOf(r.id), id:r.id, share:r.share, wins:r.wins, diff:r.diff,
                 pts:t[r.id].pts, against:t[r.id].against, played:t[r.id].rounds, raw:t[r.id].raw,
+                // Shown either way — this is "what the night's result was", not a
+                // claim that it was banked. Whether it actually landed on anyone's
+                // monthly total is exactly what `rated` (and delta being 0 below
+                // when unrated) already tells the reader.
                 monthPts:(r.got!==undefined?r.got:(i<SESSION_POINTS.length?SESSION_POINTS[i]:1)),
-                before:snapshot[r.id].elo, after:results[r.id].elo,
-                rdBefore:snapshot[r.id].rd, rdAfter:results[r.id].rd,
-                delta:results[r.id].elo-snapshot[r.id].elo};
+                before:snapshot[r.id].elo, after:after,
+                rdBefore:snapshot[r.id].rd, rdAfter:rdAfter,
+                delta:after-snapshot[r.id].elo};
       }),
       workings:workings, damp:dampFactor(rec.target)
     };
@@ -2936,7 +3173,7 @@
       if(!h.rounds){ return; }          // pre-refactor record, nothing to replay
       var sum=applyRecord(h);
       h.month=sum.month; h.players=sum.players; h.rounds_n=sum.rounds;
-      h.table=sum.table; h.workings=sum.workings; h.damp=sum.damp;
+      h.table=sum.table; h.workings=sum.workings; h.damp=sum.damp; h.rated=sum.rated;
     });
   }
 
@@ -3100,8 +3337,12 @@
   /* ---------------- cloud sync ---------------- */
   // Any endpoint that can store and return one JSON blob works. Two presets:
   // a Supabase table row, or a plain GET/PUT URL (jsonbin, a Worker, whatever).
+  // Anyone may read the league — that's intended — so this resolves to the
+  // built-in Supabase project for every visitor unless a custom sync target
+  // has been set up locally.
   function builtinReady(){ return !!(BUILTIN_SYNC.url && BUILTIN_SYNC.key); }
   function syncCfg(){
+    if(practice) return null;                        // a sandbox never talks to the league
     if(S.sync===null && S.syncOff) return null;      // deliberately turned off here
     if(S.sync) return S.sync;
     return builtinReady() ? BUILTIN_SYNC : null;
@@ -3136,7 +3377,8 @@
     try{ AUTH ? window.localStorage.setItem(AKEY,JSON.stringify(AUTH))
               : window.localStorage.removeItem(AKEY); }catch(e){}
   }
-  function isHost(){ return !!(AUTH && AUTH.refresh_token); }
+  function isRealHost(){ return !!(AUTH && AUTH.refresh_token); }
+  function isHost(){ return isRealHost() || practice; }
   function tokenFresh(){
     return !!(AUTH && AUTH.access_token && AUTH.exp && (AUTH.exp*1000 - Date.now() > 300000));
   }
@@ -3208,10 +3450,51 @@
   // not security -- the database policies are what actually stop a write.
   function applyHostMode(){
     var h=isHost();
-    ["tab-session","btn-syncset","btn-import","btn-wipe","btn-close-month","btn-addplayer"]
+    ["tab-session","btn-import","btn-wipe","btn-close-month","btn-addplayer"]
       .forEach(function(id){ var e=el(id); if(e) e.style.display = h ? "" : "none"; });
+    // these only make sense against the real league
+    ["btn-syncset","btn-sync","btn-host"].forEach(function(id){
+      var e=el(id); if(e) e.style.display = practice ? "none" : (id==="btn-syncset" && !h ? "none" : "");
+    });
+    var pb=el("btn-practice");
+    if(pb) pb.hidden=true;   // deliberately unreachable by tapping — see #practice
+    var bar=el("pracbar"); if(bar) bar.hidden=!practice;
     var b=el("btn-host");
-    if(b) b.textContent = h ? ("Host · "+(AUTH.email||"signed in")+" · sign out") : "Host sign in";
+    if(b) b.textContent = isRealHost() ? ("Host · "+(AUTH.email||"signed in")+" · sign out")
+      : "Host sign in";
+  }
+
+  /* ---------------- practice mode ---------------- */
+  function practiceStart(seed){
+    practice=true;
+    try{ window.localStorage.setItem(PRACTICE_FLAG,"1"); }catch(e){}
+    var raw=null;
+    try{ raw=window.localStorage.getItem(PRACTICE_KEY); }catch(e){}
+    if(raw && !seed){
+      try{ var o=JSON.parse(raw); if(o&&o.v===1){ S=o; if(!S.history) S.history=[]; } }catch(e){}
+    } else {
+      // start from a copy of the real roster, so a practice night feels real
+      var copy=JSON.parse(JSON.stringify(S));
+      copy.live=null; copy.sync=null; copy.syncOff=true; copy.slides=[];
+      S=copy;
+      saveLocalOnly();
+    }
+    setView("session");
+    flag(true,"Practice mode — nothing here reaches the league");
+  }
+  function practiceExit(){
+    saveLocalOnly();                       // keep the sandbox for next time
+    practice=false;
+    try{ window.localStorage.removeItem(PRACTICE_FLAG); }catch(e){}
+    if(location.hash==="#practice"){
+      try{ history.replaceState(null,"",location.pathname+location.search); }
+      catch(e){ location.hash=""; }
+    }
+    S={v:1,epoch:0,players:[],months:{},live:null,history:[],removed:{}};
+    load();
+    setView(isHost()?"session":"month");
+    flag(true,"Back on the real league");
+    scheduleSync(300);
   }
 
   function syncRead(cb){
@@ -3574,6 +3857,25 @@
       }});
   });
 
+  el("btn-practice").addEventListener("click",function(){
+    confirmBox("Start a practice session?",
+      "Practice mode is a sandbox in this browser. It copies the current roster so a trial night "+
+      "feels real, then keeps everything to itself — no sign-in needed, no network calls, and the "+
+      "league's standings and ratings are never touched.\n\n"+
+      "Leave practice any time and the real league comes back exactly as it was.",
+      "Start practice", function(){ practiceStart(true); });
+  });
+  el("btn-prac-exit").addEventListener("click",practiceExit);
+  el("btn-prac-reset").addEventListener("click",function(){
+    confirmBox("Reset the sandbox?","Clears everything you have done in practice and takes a fresh "+
+      "copy of the real roster. The league itself is not affected.","Reset",function(){
+        practice=false;
+        S={v:1,epoch:0,players:[],months:{},live:null,history:[],removed:{}};
+        load();
+        practiceStart(true);
+        render();
+      });
+  });
   el("btn-host").addEventListener("click",function(){
     if(isHost()){ hostSignOut(); flag(true,"Signed out — league is read-only on this device"); return; }
     var bg=document.createElement("div"); bg.className="modal-bg";
@@ -3616,6 +3918,15 @@
   });
 
   /* ---------------- boot ---------------- */
+  // a sandbox left open stays open across a refresh, and #practice opens one
+  try{
+    if(window.localStorage.getItem(PRACTICE_FLAG)==="1" ||
+       location.hash==="#practice") practice=true;
+  }catch(e){}
+  if(practice){ try{ window.localStorage.setItem(PRACTICE_FLAG,"1"); }catch(e){} }
+  window.addEventListener("hashchange",function(){
+    if(location.hash==="#practice" && !practice){ practiceStart(true); render(); }
+  });
   load();
   migrateGlicko();
   migrateCounting();
@@ -3631,8 +3942,10 @@
   // exposed for testing
   window.__league={get S(){return S}, set S(v){S=v}, glicko:glicko, matchDetail:matchDetail, makeRound:makeRound,
                    mergeStores:mergeStores, adoptStore:adoptStore, recomputeAll:recomputeAll,
-                   sessionTotals:sessionTotals, render:render, setView:setView, byId:byId,
+                   sessionTotals:sessionTotals, rankIds:rankIds, render:render, setView:setView, byId:byId,
                    kioskStep:kioskStep, kioskSlides:kioskSlides, paintCard:paintCard,
+                   practiceStart:practiceStart, practiceExit:practiceExit,
+                   get practice(){return practice},
                    displayStandings:displayStandings, teamsOfRecord:teamsOfRecord};
 })();
 </script>
