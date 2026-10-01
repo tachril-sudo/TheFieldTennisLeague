@@ -1200,16 +1200,47 @@
     return n;
   }
 
+  /* How many rounds in a row someone has just sat. A player who joined late has
+     never played, so their streak is every round so far — which is what we want:
+     they go on next. */
+  function sitStreaks(live, ids, inRound){
+    var st={};
+    ids.forEach(function(id){ st[id]=0; });
+    for(var i=live.rounds.length-1;i>=0;i--){
+      var rd=live.rounds[i];
+      var done=true;
+      ids.forEach(function(id){
+        if(st[id]!==(live.rounds.length-1-i)) return;   // streak already broken
+        if(inRound(rd,id)) return;                      // played, so it ends here
+        st[id]++; done=false;
+      });
+      if(done) break;                                   // nobody's streak still runs
+    }
+    return st;
+  }
+  function playedInRound(rd,id){
+    var hit=false;
+    (rd.courts||[]).forEach(function(c){
+      if((c.a||[]).indexOf(id)>=0 || (c.b||[]).indexOf(id)>=0) hit=true;
+    });
+    return hit;
+  }
+
   function pickPlaying(live){
     var out=live.out||[];
     var cap=live.courts*4, ids=live.attendees.filter(function(id){ return out.indexOf(id)<0; });
     var n=ids.length;
     var slots = n>=cap ? cap : Math.floor(n/4)*4;
     var played=playedCount(live);
+    var streak=sitStreaks(live, ids, playedInRound);
     var sat={};
     ids.forEach(function(id){ sat[id]=live.rounds.length-played[id]; });
     ids.sort(function(x,y){
-      if(sat[y]!==sat[x]) return sat[y]-sat[x];        // sat out most -> plays
+      /* Anyone who sat the last round goes on now. Balancing the totals alone
+         let the tie-break seat the same person twice running, which is what
+         people actually notice and complain about. */
+      if(streak[y]!==streak[x]) return streak[y]-streak[x];
+      if(sat[y]!==sat[x]) return sat[y]-sat[x];        // then whoever has sat most
       if(played[x]!==played[y]) return played[x]-played[y];
       return Math.random()-0.5;
     });
@@ -1306,10 +1337,20 @@
     var cap=live.courts*2, n=teams.length;
     var slots = n>=cap ? cap : Math.floor(n/2)*2;
     var played=playedTeamCount(live);
+    // same rule one level up: a team that sat the last round goes on next
+    // (in singles every "team" is one player, so this is the player rule)
+    var tStreak=sitStreaks(live, teams.map(teamKey), function(rd,key){
+      var hit=false;
+      (rd.courts||[]).forEach(function(c){
+        if(teamKey(c.a)===key || teamKey(c.b)===key) hit=true;
+      });
+      return hit;
+    });
     teams.sort(function(x,y){
       var kx=teamKey(x), ky=teamKey(y);
+      if(tStreak[ky]!==tStreak[kx]) return tStreak[ky]-tStreak[kx];
       var sx=live.rounds.length-played[kx], sy=live.rounds.length-played[ky];
-      if(sy!==sx) return sy-sx;          // sat out most -> plays
+      if(sy!==sx) return sy-sx;          // then whoever has sat most
       if(played[kx]!==played[ky]) return played[kx]-played[ky];
       return Math.random()-0.5;
     });
@@ -3481,6 +3522,38 @@
     }
     setView("session");
     flag(true,"Practice mode — nothing here reaches the league");
+    /* The sandbox copies whatever this device already holds, and it makes no
+       network calls — so on a phone that has never opened the league there is
+       nothing to copy. Say so rather than showing an empty roster. */
+    if(!S.players.length){
+      tellBox("Nothing to practise with yet",
+        "Practice copies the roster already on this device, and it never goes online — so on a phone "+
+        "that has not opened the league before, the sandbox starts empty.\n\n"+
+        "Tap Leave practice, let the league load, then open the practice link again. "+
+        "Or just add a few players here — they stay in the sandbox.");
+    }
+  }
+  /* Opening straight into #practice loads the sandbox slot, which on a device
+     that has never used practice is empty. Seed it from the league already
+     stored here, exactly as the old button did. */
+  function practiceSeed(){
+    var raw=null;
+    try{ raw=window.localStorage.getItem(KEY); }catch(e){}
+    if(!raw) return false;
+    try{
+      var o=JSON.parse(raw);
+      if(!o || !o.players || !o.players.length) return false;
+      o.live=null; o.sync=null; o.syncOff=true; o.slides=[];
+      S=o;
+      saveLocalOnly();
+      return true;
+    }catch(e){ return false; }
+  }
+  function practiceEmptyNote(){
+    tellBox("The sandbox is empty",
+      "This device has no copy of the league yet, so there was nothing to copy into practice.\n\n"+
+      "Add a few players and run a session — none of it reaches the real league. Or open the page "+
+      "normally first, let it sync, then come back to practice.");
   }
   function practiceExit(){
     saveLocalOnly();                       // keep the sandbox for next time
@@ -3928,6 +4001,11 @@
     if(location.hash==="#practice" && !practice){ practiceStart(true); render(); }
   });
   load();
+  // opening straight into the sandbox: fill it from the league already on this
+  // device, the same as pressing the button would have done
+  if(practice && !S.players.length){
+    if(!practiceSeed()) setTimeout(practiceEmptyNote,400);
+  }
   migrateGlicko();
   migrateCounting();
   if(!el("s-date").value) el("s-date").value=new Date().toISOString().slice(0,10);
